@@ -1,13 +1,37 @@
 # dirvishlib.pl
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
 #
+# Last Revision   : $Rev$
+# Revision date   : $Date$
+# Last Changed by : $Author$
+# Stored as       : $HeadURL$
 
 $CONFDIR = "/etc/dirvish";
+$VERSION = "1.3khl";
 
 #########################################################################
 #                                                         		#
 #	Licensed under the Open Software License version 2.0		#
 #                                                         		#
+#       This program is free software; you can redistribute it          #
+#       and/or modify it under the terms of the Open Software           #
+#       License, version 2.0 by Lauwrence E. Rosen.                     #
+#                                                                       #
+#       This program is distributed in the hope that it will be         #
+#       useful, but WITHOUT ANY WARRANTY; without even the implied      #
+#       warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR         #
+#       PURPOSE.  See the Open Software License for details.            #
+#                                                                       #
 #########################################################################
+
+my %CodeID = (
+           Rev    => '$Rev$'     ,
+           Date   => '$Date$'    ,
+           Author => '$Author$'  ,
+           URL    => '$HeadURL$' ,
+);
 
 #----------------------------------------------------------------------------
 #
@@ -641,28 +665,30 @@ sub loadconfig
 # similar to      dirvish-expire.pl
 # similar to      dirvish-runall.pl
 
-sub  load_master_config 
-# load master configuration file
+sub  load_master_config
+{
+	# load master configuration file
 
-if ($CONFDIR =~ /dirvish$/ && -f "$CONFDIR.conf")
-{
-	loadconfig('f', "$CONFDIR.conf", $Options);
-}
-elsif (-f "$CONFDIR/master.conf")
-{
-	loadconfig('f', "$CONFDIR/master.conf", $Options);
-}
-elsif (-f "$CONFDIR/dirvish.conf")
-{
-	seppuku 250, <<EOERR;
+	if ($CONFDIR =~ /dirvish$/ && -f "$CONFDIR.conf")
+	{
+		loadconfig('f', "$CONFDIR.conf", $Options);
+	}
+	elsif (-f "$CONFDIR/master.conf")
+	{
+		loadconfig('f', "$CONFDIR/master.conf", $Options);
+	}
+	elsif (-f "$CONFDIR/dirvish.conf")
+	{
+		seppuku 250, <<EOERR;
 ERROR: no master configuration file.
 	An old $CONFDIR/dirvish.conf file found.
 	Please read the dirvish release notes.
 EOERR
-}
-else
-{
-	seppuku 251, "ERROR: no master configuration file";
+	}
+	else
+	{
+		seppuku 251, "ERROR: no master configuration file";
+	}
 }
 
 #----------------------------------------------------------------------------

@@ -1,4 +1,12 @@
 # dirvish-runall
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev$
+# Revision date   : $Date$
+# Last Changed by : $Author$
+# Stored as       : $HeadURL$
 
 #########################################################################
 #                                                         		#
@@ -14,6 +22,14 @@
 #	PURPOSE.  See the Open Software License for details.		#
 #                                                         		#
 #########################################################################
+
+my %CodeID = (
+           Rev    => '$Rev$'     ,
+           Date   => '$Date$'    ,
+           Author => '$Author$'  ,
+           URL    => '$HeadURL$' ,
+);
+
 
 use Time::ParseDate;
 use POSIX qw(strftime);

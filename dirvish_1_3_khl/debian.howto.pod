@@ -1,5 +1,13 @@
-=head1 dirvish for Debian
+# debian.howto.pod
+# 1.3.X series
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev$
+# Revision date   : $Date$
+# Last Changed by : $Author$
+# Stored as       : $HeadURL$
 
+=head1 dirvish for Debian
 
 Here's a simple step-by-step example of how to use B<dirvish> to make a
 backup of your root partition on a second disk which is mounted as
