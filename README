@@ -1,0 +1,9 @@
+2005 Feb 09
+
+The 1.2 directory contains production code.  The 1.3 directories are
+development code snapshots, and are highly experimental, pre-alpha
+code.  Do NOT use these for a production backup system;  they may
+not even run.  They will eat your babies, burn down your house,
+and give you a painful disease.
+
+Keith
