@@ -1,0 +1,229 @@
+=head1 Dirvish ToDo List
+
+List items are not in a prioritised order.
+
+List item marks designate some intent.
+
+=over
+
+=item * to be done before next version.
+
+=item * normal.
+
+=item * ongoing.
+
+=back
+
+=head2 dirvish
+
+=over
+
+=item * Allow vault[:branch] as an argument so --vault and --branch
+options aren't needed.
+
+=item * Enhance the B<password-file:> parameter so that if given a
+relative path use the config-file search function (when written).
+
+=item * Add a --retry option for retrying a failed dirvish image.
+
+This would require pre-existance of destination image.
+
+Moves summary, log and rsync_error files into try.# directories.
+
+=item * Add a B<meta-owner> parameter like B<meta-perm> to specify a
+owner:group for meta-files in images.
+
+=item * Enhance recognition and assessment of rsync errors and
+warnings.
+
+=back
+
+=head2 dirvish-expire
+
+=over
+
+=item * Allow vault[:branch] as an argument so --vault option isn't
+needed.
+
+=item * Move non-expiration notices to bottom of dirvish-expire output.
+
+=item * Put functionality for doing cleanups of hist files to deal with
+deleted backups somewhere in dirvish-expire. A possible approach would
+be for B<--histck> to remove hist entries having no matching images on
+disk. B<--hist> might remove hist entry during expiration but that
+would complicate things.
+
+=item * Rework to eliminate the internal find. Have dirvish-expire walk
+the vaults like dirvish-locate.
+
+=item * Improve internal logic to handle failed images better. Instead
+of using just sort order it should track a latest successful image to
+keep. Preferring an unexpired, but saving an expired one if no
+unexpired available.
+
+=back
+
+=head2 dirvish-locate
+
+=over
+
+=item * Improve the performance of index file parsing.
+
+=item * Report all file dates with year even those without year in
+index.
+
+=back
+
+=head2 dirvish-runall
+
+=over
+
+=item * Allow an optional timespec like expire-rules to make runall
+stansas conditional.
+
+=back
+
+=head2 in general
+
+=over
+
+=item * Allow config-file search that searches
+I<bank>/I<vault>/B<dirvish>/ also search /B<etc>/B<dirvish>/I<vault>/
+for files.
+
+Do this with a new function that can also be called for other
+file-based looking.
+
+=item * Add command-line options for non-interactive install.sh runs.
+
+=item * Add the ability to create an initial set of configs to
+install.sh.
+
+=back
+
+----
+
+=head1 Dirvish Wish List
+
+These items are low-priority. It is recognised that they have merit and
+they have been given some thought but are, at present, not considered
+sufficiently important to invest the needed time. If a paying client
+wished one of them the priority would change but until that happens or
+the author's requirements change they are shelved.
+
+=over
+
+=item * Add a mechanism for dirvish and dirvish-expire to log their
+activity.
+
+This would probably a config parameter where you could either specify a
+file name or a syslog "facility" such as daemon or local3.
+
+=item * Create a B<dirvish-sync> utility that could syncronize with a
+remote vault.
+
+Useful for secondary backup servers and removable hard drives used for
+offsites.
+
+This would examine the images in the specified vault. Remove those
+images from the destination that are not in the source. For each new
+image in creation order rsync the whole image with the best available
+reference image for the link-dest. Finish by rsyncing the dirvish
+directory if any.
+
+=item * Add option to run arbitrary command instead of rsync.
+
+This would allow dirvish to schedule jobs that don't involve rsync but
+belong under the same process management as the main backups. Having to
+maintain multiple backup systems and schedulers can be a pain.
+
+=item * Extend EXPIRE-RULES to support multi-stage actions
+
+The date specifier of an expire rule would contain a designator set
+elsewhere in the config file. The value of the designator (expire
+action) would be a list of date-specs and actions to be done.
+
+For example:
+
+ expire-rule
+ 	wd { sun } md { 1-7 }               expire-monthly
+ 
+ expire-monthly
+ 	+1 month	clean-tree clean_list
+ 	+6 months	delete-tree
+ 	+1 year		delete-image
+
+The actual format will probably differ and the image manager
+(dirvish-expire) will need to know what to do with the actions and
+record completion in the summary file to prevent repeats.
+
+Probable actions would be:
+
+delete-image
+
+delete whole image including metadata.
+
+delete-tree
+
+delete image tree leaving metadata.
+
+compress-tree
+
+create a compressed archive of the tree (tree.cpio.gz) and delete the
+tree.
+
+clean-tree
+
+lean the image tree by deleting files that match patterns in a file.
+
+run
+
+run an executable/script.
+
+=item * Add B<--replace> and B<--inplace> to config to allow
+overwriting of an existing image.
+
+If reference == image don't delete tree and don't use B<--link-dest>.
+
+If reference != image and B<--replace>, delete image before reuse
+because the delta from the reference image is most likely less than the
+reused image But if B<--inplace> specified don't delete even if
+reference != image. Inplace is especially useful if the backup is
+incomplete and you wish to re-run it manually.
+
+=item * Create the scheduler.
+
+Most of the functionality is already documented in dirvish.conf(5) as
+comments not visible to man.
+
+The scheduler would generate a priority ordered run queue of jobs that
+can be run and launch as many would be permitted by the Max-jobs and
+Max-load limits. When a job completes recalculate whether any jobs
+still on the queue can run (window and limits) and launch them. If the
+queue is empty rescan for jobs that may now be runnable. Exit when
+there are no running or runnable jobs.
+
+The scheduler would use a /var/run/dirvish.pid file to prevent multiple
+dirvish-sched processes from running at once. The scheduler could be
+launched by cron at intervals.
+
+=item * Create a file security like facility
+
+This would examine the xfer log and report changed files after running
+them through a filter using include/exclude patterns or rules in a
+config file to eliminate expected changes. Excluded files (ones
+expected to change) might still be reported if they are suid/sgid.
+
+Deletes would not be detected this way because dirvish doesn't see
+them.
+
+=back
+
+=cut
+
+#Pod::HTML2Pod conversion notes:
+#From file TODO.html
+# 6898 bytes of input
+#Thu Feb 10 20:03:04 2005 keithl
+# No a_name switch not specified, so will not try to render <a name='...'>
+# No a_href switch not specified, so will not try to render <a href='...'>

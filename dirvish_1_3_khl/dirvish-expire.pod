@@ -1,0 +1,129 @@
+=head1 NAME
+
+dirvish-expire - delete expired dirvish images
+
+=head1 SYNOPSIS
+
+B<dirvish-expire>I<[OPTIONS]>
+
+=head1 DESCRIPTION
+
+Delete dirvish image trees or whole images that have expired.
+
+Each image B<summary> file is checked for the B<Expire:> field. If that
+field indicates the image has expired B<dirvish-expire> will delete
+that image from the vault.
+
+By default all subdirectories of all banks will be treated as vaults
+and all directories therein except the one named B<dirvish> will be
+checked for summary files.
+
+The removal of an image will have no effect on other images.
+
+B<Dirvish-expire> will not delete an image unless it finds at least one
+image in that branch that has an intact image tree and B<Status:
+success> in the summary that is not expired.
+
+=head1 OPTIONS
+
+Each option on the command line may be specified any number of times.
+Those options that support lists in the config files will accumulate
+all of their arguments otherwise each specification will override the
+ones before.
+
+Each option may be unambiguously abbreviated.
+
+B<--time> I<time_expression>
+
+Execute as though I<time_expression> were the current time.
+
+I<Time_expression> is processed by B<Time::Parsedate(3pm)> so relative
+time and date strings are permitted. See B<Time::Parsedate(3pm)> for
+more details.
+
+B<--tree>
+
+Only delete the image tree, leave in place the rest of the image
+directory with summary, log and any other image administrative files.
+
+B<--vault> I<vault>
+
+Restrict expiration to the specified I<vault>.
+
+B<--no-run>
+
+Don't actually do anything. Just display what would have happened.
+
+B<--quiet>
+
+Run quietly, only report errors.
+
+Normally B<dirvish-expire> will report the images deleted.
+
+=head1 EXIT CODES
+
+To facilitate further automation and integration of B<dirvish-expire>
+with other tools B<dirvish-expire> provides rationalised exit codes.
+The exit codes are range based. While the code for a specific error may
+change from one version to another it will remain within the specified
+range. So don't test for specific exit codes but instead test for a
+range of values. To the degree possible higher value ranges indicate
+more severe errors.
+
+=over 10
+
+=item B<0>
+
+success
+
+=item B<200-219>
+
+An error was encountered in loading a configuration file.
+
+=item B<220-254>
+
+An error was detected in the configuration.
+
+=item B<255>
+
+Incorrect usage.
+
+=back
+
+=head1 FILES
+
+B</etc/dirvish/master.conf>
+
+alternate master configuration file.
+
+B</etc/dirvish.conf>
+
+master configuration file.
+
+I<bank/vault/image/>B<summary>
+
+image creation summary.
+
+I<bank/vault/image/>B<tree>
+
+actual image of source directory tree.
+
+=head1 SEE ALSO
+
+ dirvish.conf(5)
+ Time::ParseDate(3pm)
+
+=head1 AUTHOR
+
+Dirvish was created by J.W. Schultz of Pegasystems Technologies.
+
+Dirvish is now maintained by Keith Lofstrom at www.dirvish.org , with
+the able assistance of many others.
+
+=head1 BUGS
+
+B<Dirvish-expire> will walk the file hierarchy of all banks or the
+specified vault looking for summary files. Anything non-dirvish in
+there may cause excess file-walking.
+
+=cut

@@ -1,0 +1,67 @@
+README for Dirvish-1.3khl branch directory
+
+V0.01 Keith Lofstrom  2005-Feb-10
+
+These files are not yet tested or executable.  They will be someday,
+but they will need more work.  Most importantly, I want to fix these
+things:
+
+1)  There is a ChmodOnExpire fix described on the Wiki.  It makes use
+    of the "X" flag for GNU chmod.  The dirvish backup system will be
+    used on Macs and BSD and Solaris and ... .  I do not want to use
+    any features that are not on all these machines (and testable as
+    well.
+
+    I would like to see this whole section reworked;  I do not like
+    using system calls when there is a Perl equivalent.  Please look
+    through CPAN for appropriate modules that do the same thing.  
+    That is more efficient, and more portable, and more readable.
+
+2)  The install is WAY broken.  I refactored the contents of loadconfig.pl
+    into the library dirvishlib.pl, and sucked in all other subroutines
+    as well.  Now, I would like to use MakeMaker and Makefile.pl to
+    do installs the "standard Perl way".  
+
+    The install should set $CONFDIR in dirvishlib.pl . 
+
+    Eventually, the install should also do testing.
+
+3)  I want to add a test for an environment variable for the master
+    configuration file in load_master_config ;  this should override
+    $CONFDIR .
+
+4)  I want to replace most all the tabs with 3 spaces.  I like some
+    indent, but a whole tab is too much in most places.  However, I
+    do NOT want to do a simple global replace;  It is important that
+    things are readable and comments line up, for example.  Whichever
+    way we go, everything should look the same.
+
+5)  It is possible to embed pod in the programs.  This might be a good
+    place for design notes.
+
+6)  I want a heck of a lot more documentation on how this thing works.
+
+7)  I am impressed by readable a lot more than I am impressed by 
+    clever but cryptic.
+
+8)  I want subversion tags for version numbers.
+
+9)  CHANGELOG, INSTALL, TODO.pod, RELEASE.pod, and FAQ.pod all need
+    some rework.  I also want a design document.
+
+MORE LATER
+
+
+Notes:
+
+I have refactored all the subroutines into dirvishlib.pl .  We may
+want to make a package out of this instead.   I added a few subs
+to get rid of the anonymous subs in options, and a routine that
+incorporates the common code for loading the master.conf file, and
+another routine that initializes the %$Options hash.   I am not yet
+initializing *everything* in the hash, but I think that might be a
+good move, depending on what we learn while building test harnesses.
+
+I combined the imsort subroutines from both dirvish-expire and
+dirvish-locate.  This may not be kosher.
+

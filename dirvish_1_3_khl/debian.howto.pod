@@ -1,0 +1,168 @@
+=head1 dirvish for Debian
+
+
+Here's a simple step-by-step example of how to use B<dirvish> to make a
+backup of your root partition on a second disk which is mounted as
+/backup :
+
+First, note that the example files listed below can be found in
+C</usr/share/doc/dirvish/examples/> as C<dirvish.conf> and
+C<dirvish.conf.root> . Don't forget to modify the client line! (see below)
+
+In C</etc/dirvish/master.conf> put the following:
+  
+ bank:
+ 	/backup
+ exclude:
+ 	lost+found/
+ 	*~
+ 	.nfs*
+ Runall:
+ 	root	22:00
+ expire-default: +15 days
+ expire-rule:
+ #       MIN HR    DOM MON       DOW  STRFTIME_FMT
+ 	*   *     *   *         1    +3 months
+ 	*   *     1-7 *         1    +1 year
+ 	*   *     1-7 1,4,7,10  1
+ 	*   10-20 *   *         *    +4 days
+ #	*   *     *   *         2-7  +15 days
+
+Lines beginning with "#" are comments. The "bank" (the safety deposit
+kind) defines where the data to be stored; in this example it's at
+C</backup>. The exclude stanza is a default list of filenames that are
+not to be backed up.
+
+The B<Runall> stanza tells which "vaults" (area of storage inside the
+bank) to backup during the daily run. Note that each vault contains at
+least one branch; for simple usage you can basically ignore branches
+and then the "default" branch will be used for a vault.
+
+The time next to the vault name defines the timestamp of the backup; it
+is forced to be in the past. This means that if the time stated is
+22:00, and the backup is made at 01:00, then the backup will have the
+date of the previous day, which keeps the names of the backups
+consistent, even if the backup was delayed for some reason. Also,
+people expect backups to contain the state of things at the end of the
+date shown, so setting the time to the end of the day will keep the
+date as expected, even if for some reason the backup is made after
+00:00.
+
+In short: make sure that the time listed is earlier than when the
+backup will be made, preferably before midnight, and everything will be
+OK.
+
+The B<expire-default> line defines the default age after which backups
+will expire, i.e. be removed by B<dirvish-expire>.
+
+The B<expire-rule> stanza is for refining how long before a backup
+expires; e.g. the first line has "1" for DOW (day of week), i.e.
+Monday. Hence backups made on a Monday will stay around for 3 months.
+The second line says that backups made in the first week of the month
+(DOM = day of month) won't expire until after one year. An empty time
+spec is the same as "never".
+
+After having defined the master configuration above, a
+configuration for each branch needs to be defined. Remember that each
+vault contains at least one branch, and in our simple example this is
+simply the "default" branch. The configuration file for the default
+branch is I<$BANK>/I<$VAULT>B</dirvish/default.conf>, where I<$BANK> is
+the definition of the bank from the master config, and I<$VAULT> is the
+name of the vault ("root" in our example). So, in
+C</backup/root/dirvish/default.conf> put the following:
+
+  
+ client: thishost
+ tree: /
+ xdev: true
+ index: gzip
+ image-default: %Y%m%d
+ exclude:
+ 	var/cache/apt/archives
+ 	var/cache/man
+ 	tmp
+ 	var/tmp
+  
+
+The B<client> line defines which system the data is to come from. If
+this is to be a local backup i.e. the backup is made on the same
+system, put the output from the B<hostname> command here. B<dirvish>
+will then know that the network is not to be used.
+
+The B<tree> line defines which directory tree is to be backed up for
+this vault definition.
+
+The B<xdev> line tells B<dirvish> to stay on the same filesystem as the
+one where the tree starts, i.e. to only backup that one filesystem.
+This is a must when the backup is made to a filesystem mounted on the
+same tree! Otherwise e.g. C</backup> would also be backed up, which
+won't work of course. If the backup is on the same filesystem, exclude
+patterns will have to be used. Also ensure that C</proc> isn't looked
+at by B<dirvish>, as access to "files" there can crash your system!
+Other "special" filesystems such as devfs, sysfs and NFS mounts must
+also be excluded (all of which the B<xdev> option conveniently does for
+you; i.e. it's best to always backup per filesystem).
+
+The B<image-default> line defines the default name of each image; the
+setting above uses the year, month, and day of month. The exclude
+stanza defines what files to exclude from this vault's backup, in
+addition to those excludes specified in the master.conf file.
+
+The B<index> line specifies that an index file of the image is to be
+created and stored compressed with gzip.
+
+The definition is now complete. To initialize the first image,
+run the following command:
+
+  
+ dirvish --vault root --init
+  
+
+This will now create an initial backup image for root.
+
+From now on, the daily run of B<dirvish-runall> will backup
+those vaults that are defined in the master config in the B<Runall>
+stanza.
+
+The daily run of B<dirvish-expire> will examine the C<summary>
+file (in the image subdirectories inside the vaults) to determine which
+images to remove. The time of expiry is actually determined when the
+image is created. For this, the expire rules in the master config and
+in the vault-specific (actually branch-specific, remember?) config if
+rules exist in that config, which overrule the master config, are used.
+
+Note that B<dirvish-expire> will never remove the last good image in a
+branch. The best time to run B<dirvish-expire> is just before
+B<dirvish-runall>, so that the expired images will be deleted just
+before the new one is created, thus making space available for the new
+image. This is what the Debian dirvish-cronjob script does (see next
+point).
+
+In no circumstances should B<dirvish-expire> and B<dirvish-runall> run
+simultaneously (as both of these can heavily impact system performance,
+and running together may lead to problems); running either of these
+together with B<updatedb> (for the B<locate> command) should also be
+avoided. Speaking of B<updatedb>: it's probably best to exclude the
+dirvish banks from the updatedb scan! Using a separate filesystem for
+the bank, and only mounting that when necessary, precludes the need to
+update C</etc/updatedb.conf>.
+
+The Debian installation includes a cron configuration that runs
+B<dirvish-expire> and B<dirvish-runall> every night at 23:04. You can
+modify the cron entry itself in C</etc/cron.d/dirvish> and the script
+that is run is C</etc/dirvish/dirvish-cronjob> which can also be
+modified if necessary (e.g. to mount and umount C</backup>).
+
+If running B<dirvish> over the network is intended, you may
+want to investigate setting up B<ssh> so that B<rsync> will run over
+B<ssh> without passwords or passphrases being asked. This is basically
+an ssh FAQ... search for C<authorized_keys> and/or C<ssh-agent>.
+
+For more information, see the HOWTO file and FAQ.html in
+C</usr/share/doc/dirvish/> , and the B<dirvish> and B<dirvish.conf>
+manpages.
+
+
+-- Paul Slootman , Tue, 25 Mar 2003 10:50:55 +0100
+
+=cut

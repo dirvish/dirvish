@@ -1,0 +1,42 @@
+=head1 DIRVISH RELEASE NOTES
+
+=head2 Dirvish version 1.2 released 24 February 2003
+
+=over
+
+=item * Corrected a logic inversion bug in B<pre-client> and
+B<post-client> that resulted in the scripts running on the server. They
+will now run on the client as intended.
+
+=item * LIcense changed to OSL.
+
+=back
+
+=head2 Dirvish version 1.1.2 released 15 July 2003
+
+=head2 Dirvish version 1.1.1 released 26 May 2003
+
+No issues
+
+=head2 Dirvish version 1.1 released 17 May 2003
+
+=over
+
+=item * The master and default config files have been renamed.
+
+ /etc/dirvish/dirvish.conf --> /etc/dirvish/master.conf
+ $VAULT/dirvish/dirvish.conf --> $VAULT/dirvish/default.conf
+
+=item * The B<rsync-options:> option has been replaced with
+B<rsync-option:> which only accepts one option per specification.
+
+=back
+
+=cut
+
+#Pod::HTML2Pod conversion notes:
+#From file RELEASE.html
+# 908 bytes of input
+#Thu Feb 10 20:03:04 2005 keithl
+# No a_name switch not specified, so will not try to render <a name='...'>
+# No a_href switch not specified, so will not try to render <a href='...'>
