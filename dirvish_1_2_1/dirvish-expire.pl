@@ -2,8 +2,8 @@
 
 #       $Id: dirvish-expire.pl,v 12.0 2004/02/25 02:42:14 jw Exp $  $Name: Dirvish-1_2 $
 
-$VERSION = ('$Name: Dirvish-1_2 $' =~ /Dirvish/i)
-	? ('$Name: Dirvish-1_2 $' =~ m/^.*:\s+dirvish-(.*)\s*\$$/i)[0]
+$VERSION = ('$Name: Dirvish-1_2_1 $' =~ /Dirvish/i)
+	? ('$Name: Dirvish-1_2_1 $' =~ m/^.*:\s+dirvish-(.*)\s*\$$/i)[0]
 	: '1.1.2 patch' . ('$Id: dirvish-expire.pl,v 12.0 2004/02/25 02:42:14 jw Exp $'
 		=~ m/^.*,v(.*:\d\d)\s.*$/)[0];
 $VERSION =~ s/_/./g;
