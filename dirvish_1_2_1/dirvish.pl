@@ -71,7 +71,8 @@ use Time::Period;
 	 21 => [ 'error',	"some error returned by waitpid()" ],
 	 22 => [ 'error',	"error allocating core memory buffers" ],
 	 23 => [ 'error',	"partial transfer" ],
-	 24 => [ 'error',	"file vanished on sender" ],
+#KHL 2005/02/18:  rsync code 24 changed from 'error' to 'warning'
+	 24 => [ 'warning',	"file vanished on sender" ],
 
 	 30 => [ 'error',	"timeout in data send/receive" ],
 
@@ -411,8 +412,11 @@ if ($$Options{Expire} && $$Options{Expire} !~ /Never/i)
 	$$Options{Expire} = 'Never';
 }
 
-($srctree, $aliastree) = split(/\s+/, $$Options{tree})
+#+SIS: KHL 2005-02-18  SpacesInSource fix
+#-SIS: ($srctree, $aliastree) = split(/\s+/, $$Options{tree})
+($srctree, $aliastree) = split(/[^\\]\s+/, $$Options{tree})
 	or seppuku 228, "ERROR: no source tree defined";
+$srctree =~ s(\\ )( )g;                     #+SIS
 $srctree =~ s(/+$)();
 $aliastree =~ s(/+$)();
 $aliastree ||= $srctree;
@@ -525,10 +529,14 @@ $$Options{'no-run'} and exit 0;
 
 printf SUMMARY "%s: %s\n", 'Backup-begin', strftime('%Y-%m-%d %H:%M:%S', localtime);
 
+$env_srctree = $srctree;		#+SIS:
+$env_srctree =~ s/ /\\ /g;		#+SIS:
+
 $WRAPPER_ENV = sprintf (" %s=%s" x 5,
 	'DIRVISH_SERVER', $$Options{Server},
 	'DIRVISH_CLIENT', $$Options{client},
-	'DIRVISH_SRC', $srctree,
+#-SIS:	'DIRVISH_SRC', $srctree,
+	'DIRVISH_SRC', $env_srctree,	#+SIS:
 	'DIRVISH_DEST', $destree,
 	'DIRVISH_IMAGE', join(':',
 		$$Options{vault},
@@ -922,7 +930,10 @@ sub scriptrun
 	ref($A{cmd}) and seppuku 232, "$A{lable} option specification error";
 
 	$cmd = strftime($A{cmd}, localtime($A{now}));
-	if ($A{dir} =~ /^:/)
+
+#KHL 2005-02-18 BadShellCommandCWD:  fix inverted logic
+#	if ($A{dir} =~ /^:/)
+	if ($A{dir} !~ /^:/)
 	{
 		$rcmd = sprintf ("%s 'cd %s; %s %s' >>%s",
 			("$A{shell}" || "/bin/sh -c"),

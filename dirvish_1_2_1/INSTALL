@@ -1,6 +1,6 @@
 	INSTALLATION and GETTING STARTED
 
-#       $Id: INSTALL,v 12.0 2004/02/25 02:42:13 jw Exp $  $Name: Dirvish-1_2 $
+#KHL 2005-02-18  removed "exclude core" error
 
 
 PREREQUISITES
@@ -54,7 +54,6 @@ CONFIGURATION
 			/e/backup2
 		exclude:
 			lost+found/
-			core
 			*~
 			.nfs*
 		Runall:

@@ -1,4 +1,6 @@
-#! /bin/sh
+#!/bin/sh
+
+#KHL 2005-02-18  space removed from above #!/bin/sh
 
 case `echo "testing\c"; echo 1,2,3`,`echo -n testing; echo 1,2,3` in
 	*c*,-n*) ECHO_N= ECHO_C='
@@ -36,7 +38,8 @@ do
 		if [ -n "$ans" ] 
 		then
 			PREFIX="$ans"
-			if [ "$PREFIX" == "/" ]
+                        # KHL 2005-02-18  == changed to = in "if" below
+			if [ "$PREFIX" = "/" ]
 			then
 				PREFIX=""
 			fi
