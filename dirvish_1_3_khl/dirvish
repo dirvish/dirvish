@@ -29,6 +29,11 @@ my %CodeID = ( Rev    => '$Rev$'     ,
                URL    => '$HeadURL$' ,
              );
 
+$VERSION =   $CodeID{URL};
+$VERSION =~  s#^.*dirvish_##;  # strip off the front
+$VERSION =~  s#\/.*##;         # strip off the rear after the last /
+$VERSION =~  s#[_-]#.#g;       # _ or - to "."
+
 #########################################################
 #
 #		EXIT CODES
