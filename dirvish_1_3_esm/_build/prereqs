@@ -1,0 +1,13 @@
+{
+          'build_requires' => {},
+          'conflicts' => {},
+          'requires' => {
+                          'Getopt::Long' => 0,
+                          'perl' => '>= 5.6.0',
+                          'Time::Period' => 0,
+                          'Time::ParseDate' => 0,
+                          'File::Find' => 0,
+                          'File::chmod' => '>= 0.31'
+                        },
+          'recommends' => {}
+        }

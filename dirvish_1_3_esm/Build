@@ -1,0 +1,46 @@
+#! /usr/bin/perl
+
+use strict;
+use Cwd;
+use File::Spec;
+
+BEGIN {
+  $^W = 1;  # Use warnings
+  my $curdir = File::Spec->canonpath( Cwd::cwd() );
+  my $is_same_dir = $^O eq 'MSWin32' ? (Win32::GetShortPathName($curdir) eq '/mnt/homes2/eric/dirvish/Dirvish-1.3-esm')
+                                       : ($curdir eq '/mnt/homes2/eric/dirvish/Dirvish-1.3-esm');
+  unless ($is_same_dir) {
+    die ('This script must be run from /mnt/homes2/eric/dirvish/Dirvish-1.3-esm, not '.$curdir."\n".
+	 "Please re-run the Build.PL script here.\n");
+  }
+  @INC = 
+    (
+     '/etc/perl',
+     '/usr/local/lib/perl/5.8.4',
+     '/usr/local/share/perl/5.8.4',
+     '/usr/lib/perl5',
+     '/usr/share/perl5',
+     '/usr/lib/perl/5.8',
+     '/usr/share/perl/5.8',
+     '/usr/local/lib/site_perl',
+     '/usr/local/lib/perl/5.8.0',
+     '/usr/local/share/perl/5.8.0',
+     '/mnt/homes2/eric/dirvish/Dirvish-1.3-esm',
+     '/mnt/homes2/eric/dirvish/Dirvish-1.3-esm/_build/lib'
+    );
+}
+
+use Dirvish::Build;
+
+if (-e 'Build.PL' and not Dirvish::Build->up_to_date("Build.PL", $0)) {
+   warn "Warning: Build.PL has been altered.  You may need to run 'perl Build.PL' again.\n";
+}
+
+# This should have just enough arguments to be able to bootstrap the rest.
+my $build = Dirvish::Build->resume (
+  properties => {
+    config_dir => '/mnt/homes2/eric/dirvish/Dirvish-1.3-esm/_build',
+  },
+);
+
+$build->dispatch;
