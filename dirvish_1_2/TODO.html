@@ -1,0 +1,215 @@
+<HTML>
+<HEAD>
+<TITLE>Dirvish ToDo List</TITLE>
+<META NAME="ID" CONTENT="$Id: TODO.html,v 12.0 2004/02/25 02:42:14 jw Exp $">
+<META NAME="Version tag" CONTENT="$Name: Dirvish-1_2 $">
+</HEAD>
+<BODY>
+<H1 align="center">Dirvish ToDo List</H1>
+<P>
+List items are not in a prioritised order.
+<P>
+List item marks designate some intent.
+<UL>
+<LI type="square">to be done before next version.
+<LI type="disc">normal.
+<LI type="circle">ongoing.
+</UL>
+<h3>dirvish</h3>
+<ul>
+<LI type=square>
+Allow vault[:branch] as an argument so --vault and --branch
+options aren't needed.
+<LI type="disc">
+Enhance the <b>password-file:</b> parameter 
+so that if given a relative
+path use the config-file search function (when written).
+<LI type="disc">
+Add a --retry option for retrying a failed dirvish image.
+<p>
+This would require pre-existance of destination image.
+<p>
+Moves summary, log and rsync_error files into try.#
+directories.
+<LI type="disc">
+Add a <b>meta-owner</b> parameter like <b>meta-perm</b>
+to specify a owner:group for meta-files in images.
+<LI type="circle">
+Enhance recognition and assessment of rsync errors and warnings.
+</ul>
+<h3>dirvish-expire</h3>
+<ul>
+<LI type=square>
+Allow vault[:branch] as an argument so --vault
+option isn't needed.
+<LI type="disc">
+Move non-expiration notices to bottom of dirvish-expire output.
+<LI type="disc">
+Put functionality for doing cleanups of
+hist files to deal with deleted backups somewhere in dirvish-expire.
+A possible approach would be for
+<B>--histck</B> to remove hist entries having no matching images on disk.
+<B>--hist</B> might remove hist entry during expiration but
+that would complicate things.
+<LI type="disc">
+Rework to eliminate the internal find.
+Have dirvish-expire walk the vaults like dirvish-locate.
+<LI type="disc">
+Improve internal logic to handle failed
+images better. Instead of using just sort order it should
+track a latest successful image to keep.  Preferring an
+unexpired, but saving an expired one if no unexpired
+available.
+</ul>
+<h3>dirvish-locate</h3>
+<ul>
+<LI type="disc">
+Improve the performance of index file parsing.
+<LI type="disc">
+Report all file dates with year even those without year in
+index.
+</ul>
+<h3>dirvish-runall</h3>
+<ul>
+<li type="disc">
+Allow an optional timespec like expire-rules to make runall
+stansas conditional.
+</ul>
+<h3>in general</h3>
+<ul>
+<li type=square>
+Allow config-file search that searches
+<I>bank</i>/<i>vault</i>/<b>dirvish</b>/ also search
+/<b>etc</b>/<b>dirvish</b>/<i>vault</i>/ for files.
+<br>
+Do this with a new function that can also be called for
+other file-based looking.
+<li type="disc">
+Add command-line options for non-interactive install.sh runs.
+<li type="disc">
+Add the ability to create an initial set of configs to install.sh.
+</ul>
+<hr>
+<h1 align="center">Dirvish Wish List</h1>
+<p>
+These items are low-priority.
+It is recognised that they have merit
+and they have been given some thought but are, at present,
+not considered sufficiently important to invest the needed
+time.
+If a paying client wished one of them the priority would change
+but until that happens or the author's requirements change they are shelved.
+<UL>
+<LI>
+Add a mechanism for dirvish and dirvish-expire to log their
+activity.
+<p>
+This would probably a config parameter where you could
+either specify a file name or a syslog "facility" such as
+daemon or local3.
+<LI>
+Create a <b>dirvish-sync</b> utility that could syncronize
+with a remote vault.
+<p>
+Useful for secondary backup servers and removable hard
+drives used for offsites.
+<p>
+This would examine the images in the specified vault.
+Remove those images from the destination that are not in the source.
+For each new image in creation order
+rsync the whole image
+with the best available reference image for the link-dest.
+Finish by rsyncing the dirvish directory if any.
+<LI>
+Add option to run arbitrary command instead of rsync.
+<P>
+This would allow dirvish to schedule jobs that don't
+involve rsync but belong under the same process management as
+the main backups.
+Having to maintain multiple backup systems and schedulers
+can be a pain.
+<LI>
+Extend EXPIRE-RULES to support multi-stage actions
+<P>
+The date specifier of an expire rule would contain a
+designator set elsewhere in the config file.  The value of
+the designator (expire action) would be a list of date-specs
+and actions to be done.
+<p>For example:
+<pre>
+expire-rule
+	wd { sun } md { 1-7 }               expire-monthly
+
+expire-monthly
+	+1 month	clean-tree clean_list
+	+6 months	delete-tree
+	+1 year		delete-image
+</pre>
+<p>
+The actual format will probably differ and the image manager
+(dirvish-expire) will need to know what to do with the actions
+and record completion in the summary file to prevent repeats.
+<p>
+Probable actions would be:
+<table>
+<tr valign="top"><td>delete-image</td>
+	<td>delete whole image including metadata.</td></tr>
+<tr valign="top"><td>delete-tree</td>
+	<td>delete image tree leaving metadata.</td></tr>
+<tr valign="top"><td>compress-tree</td>
+	<td>
+create a compressed archive of the tree (tree.cpio.gz)
+and delete the tree.
+	</td></tr>
+<tr valign="top"><td>clean-tree</td>
+	<td>
+lean the image tree by deleting files that match patterns in a file.
+	</td></tr>
+<tr valign="top"><td>run</td>
+	<td>run an executable/script.</td></tr>
+</table>
+<LI>
+Add <B>--replace</B> and <B>--inplace</B> to config to allow overwriting of an existing image.
+<P>
+If reference == image don't
+delete tree and don't use <B>--link-dest</B>.
+<P>
+If reference != image and <B>--replace</B>, delete image before reuse 
+because the delta from the reference image is most likely
+less than the reused image
+But if <B>--inplace</B> specified don't delete even if
+reference != image.  Inplace is especially useful if the
+backup is incomplete and you wish to re-run it manually.
+<LI>
+Create the scheduler.
+<P>
+Most of the functionality is already
+documented in dirvish.conf(5) as comments not visible to man.
+<P>
+The scheduler would generate a priority ordered run queue of
+jobs that can be run and launch as many would be permitted
+by the Max-jobs and Max-load limits.
+When a job completes recalculate whether any jobs still on the queue can run
+(window and limits) and launch them.
+If the queue is empty rescan for jobs that may now be runnable.
+Exit when there are no running or runnable jobs.
+<P>
+The scheduler would use a /var/run/dirvish.pid file to
+prevent multiple dirvish-sched processes from running at
+once.
+The scheduler could be launched by cron at intervals.
+<LI>
+Create a file security like facility
+<p>
+This would examine the xfer log and
+report changed files after running them through a filter
+using include/exclude patterns or rules in a config file to eliminate
+expected changes.  Excluded files (ones expected to change)
+might still be reported if they are suid/sgid.
+<p>
+Deletes would not be detected this way because dirvish
+doesn't see them.
+</UL>
+</BODY>
+</HTML>
+

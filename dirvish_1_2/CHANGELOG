@@ -1,0 +1,784 @@
+2004/02/25           dirvish.conf.5       12.0       Dirvish-1.2        
+                     dirvish.pl           12.0       Dirvish-1.2        
+                     install.sh           12.0       Dirvish-1.2        
+                     loadconfig.pl        12.0       Dirvish-1.2        
+                     RELEASE.html         12.0       Dirvish-1.2        
+                     TODO.html            12.0       Dirvish-1.2        
+                     dirvish-expire.8     12.0       Dirvish-1.2        
+                     dirvish-expire.pl    12.0       Dirvish-1.2        
+                     dirvish-locate.8     12.0       Dirvish-1.2        
+                     dirvish-locate.pl    12.0       Dirvish-1.2        
+                     dirvish-runall.8     12.0       Dirvish-1.2        
+                     dirvish-runall.pl    12.0       Dirvish-1.2        
+                     dirvish.8            12.0       Dirvish-1.2        
+                     COPYING              12.0       Dirvish-1.2        
+                     FAQ.html             12.0       Dirvish-1.2        
+                     INSTALL              12.0       Dirvish-1.2        
+                     RELEASE.html         11.7                         
+                     FAQ.html             11.8                         
+Preparing to tag 1.2.0
+
+Note license change and prep for 1.2
+
+Update license note.
+
+2004/02/23           dirvish.pl           11.27                        
+                     install.sh           11.3                         
+Set --delete on rsync so retries will delete deleted files.
+					(Thanks to Nathan Hunsperger)
+
+Allow installs to existing install dir with missing subdirs.
+
+2004/01/20           FAQ.html             11.7                         
+Removed banner reference.
+
+2004/01/19           FAQ.html             11.6                         
+                     dirvish.pl           11.26                        
+Reordered chmod operations on image.
+					thanks to Nathan Hunsperger
+
+2003/12/21           dirvish.pl           11.25                        
+Better handling of vanished files on sender.
+
+2003/12/17           TODO.html            11.16                        
+file security check added to wish list
+
+2003/12/15           dirvish.pl           11.24                        
+Added recognition for vanishing (unexpected EOF) files on
+client.  This happens due to a file being deleted or
+truncated between file scan and send.
+
+2003/12/11           FAQ.html             11.5                         
+                                          11.4                         
+Fixed html tag typo				-- Frank de Jong
+
+2003/12/08           dirvish.pl           11.23                        
+Fix permissions of rsync-error file.
+					Thanks to Nathan Hunsperger
+
+2003/12/06           INSTALL              11.4                         
+Change to reflect rsync's 2.5.7 security release and plan
+for post 2.5.6 CVS HEAD to be 2.6.0
+
+2003/12/03           dirvish.conf.5       11.12                        
+fixed some references to expire-rules (wrong plural) and
+expire_rules (underscore)
+
+2003/11/26           dirvish.conf.5       11.11                        
+                     dirvish.pl           11.22                        
+                                          11.21                        
+                     TODO.html            11.15                        
+Added a devices option (default yes) to allow excluding
+devices from backups.
+
+Fixed problems with expire-default and expire rules that
+assume never.
+
+2003/10/25           dirvish-expire.pl    11.12                        
+Allow a vault named dirvish.
+A vault named "tree" will still be skipped.
+
+2003/09/17           dirvish.conf.5       11.10                        
+fix typo
+
+2003/09/14           dirvish.pl           11.20                        
+                     loadconfig.pl        11.13                        
+                     TODO.html            11.14                        
+Check to be sure that pre and post scripts are specified
+correctly (single value) in config file.
+
+Added whitespace after seppuku_prefix
+
+2003/09/01           TODO.html            11.13                        
+                     dirvish-expire.pl    11.11                        
+fixed dirvish-expire --vault so it works
+
+Still need major rework.
+
+2003/08/30           TODO.html            11.12                        
+2003/08/29           dirvish.pl           11.19                        
+                                          11.18                        
+                     loadconfig.pl        11.12                        
+                     TODO.html            11.11                        
+                     INSTALL              11.3                         
+                     FAQ.html             11.3                         
+                     dirvish.conf.5       11.9                         
+Fix seppuku prefix so it is $vault:$branch:$image
+
+Added seppuku prefix variable so error messages will be
+suitably marked with the vault:
+
+Better reflect filesystem requirements in INSTALL and FAQ.
+
+2003/08/03           dirvish-expire.pl    11.10                        
+                     dirvish-locate.pl    11.9                         
+                     dirvish-runall.pl    11.9                         
+                     dirvish.pl           11.17                        
+                     loadconfig.pl        11.11                        
+                     COPYING              11.5                         
+                                          11.4                         
+                     dirvish-expire.pl    11.9                         
+                     dirvish-locate.pl    11.8                         
+                     dirvish-runall.pl    11.8                         
+                     dirvish.pl           11.16                        
+                     loadconfig.pl        11.10                        
+                     COPYING              11.3                         
+Upgraded license to OSL 2.0
+
+Changed License to OSL 1.1
+
+2003/08/02           TODO.html            11.10                        
+                                          11.9                         
+                     dirvish.8            11.5                         
+                     dirvish.pl           11.15                        
+Restructured TODO list so TODO items are grouped by program.
+
+Trim down on the documented command-line options.
+Just leave the ones that are specific to command-line usage
+or actually make sense on the command-line.
+
+2003/08/01           TODO.html            11.8                         
+                     dirvish-runall.pl    11.7                         
+                     dirvish-runall.8     11.3                         
+                     dirvish.8            11.4                         
+                     dirvish-expire.8     11.3                         
+                     dirvish-locate.8     11.4                         
+                     TODO.html            11.7                         
+                     dirvish-expire.pl    11.8                         
+                     dirvish-locate.pl    11.7                         
+                     dirvish-runall.pl    11.6                         
+                     dirvish.pl           11.14                        
+                     loadconfig.pl        11.9                         
+Make exit code reflect number of failed jobs.
+
+Document exit code rationalisation.
+
+Added seppuku function so scripts may honorably pass after
+failure.  It is a little like die() except it explicity sets
+the exit code and doesn't present debugging info.
+
+Rationalized exit codes.
+
+2003/07/29           dirvish.pl           11.13                        
+Eliminated the last '|| die'
+
+2003/07/27           dirvish-expire.pl    11.7                         
+                     dirvish-locate.pl    11.6                         
+                     dirvish-runall.pl    11.5                         
+                     dirvish.pl           11.12                        
+                     loadconfig.pl        11.8                         
+                     TODO.html            11.6                         
+When looking for files use -f to test for their existance
+instead of -r.  We are more likely to hit a directory with
+the same name than a file that isn't readable.
+
+2003/07/25           dirvish.pl           11.11                        
+Identified another "filesystem full" error message.
+
+2003/07/18           TODO.html            11.5                         
+2003/07/17           RELEASE.html         11.6                         
+                                          11.5                         
+                     dirvish-runall.pl    11.4                         
+                     dirvish.pl           11.10                        
+                     dirvish-expire.pl    11.6                         
+                     dirvish-locate.pl    11.5                         
+                     RELEASE.html         11.4                         
+                     dirvish.conf.5       11.8                         
+Bring release notes up-to-date with (pre|post)-client logic
+inversion fix.
+
+2003/07/16           dirvish.pl           11.9                         
+                     TODO.html            11.4                         
+                     install.sh           11.2       Dirvish-1.1.2        
+                     loadconfig.pl        11.7       Dirvish-1.1.2        
+                     COPYING              11.2       Dirvish-1.1.2        
+                     FAQ.html             11.2       Dirvish-1.1.2        
+                     INSTALL              11.2       Dirvish-1.1.2        
+                     RELEASE.html         11.3       Dirvish-1.1.2        
+                     TODO.html            11.3       Dirvish-1.1.2        
+                     dirvish-expire.8     11.2       Dirvish-1.1.2        
+                     dirvish-expire.pl    11.5       Dirvish-1.1.2        
+                     dirvish-locate.8     11.3       Dirvish-1.1.2        
+                     dirvish-locate.pl    11.4       Dirvish-1.1.2        
+                     dirvish-runall.8     11.2       Dirvish-1.1.2        
+                     dirvish-runall.pl    11.3       Dirvish-1.1.2        
+                     dirvish.8            11.3       Dirvish-1.1.2        
+                     dirvish.conf.5       11.7       Dirvish-1.1.2        
+                     dirvish.pl           11.8       Dirvish-1.1.2        
+Fix pre- and post-client.  Had inverted logic regarding
+whether to use ssh or local shell.
+
+tagging 1.1.2
+
+2003/07/15           dirvish.conf.5       11.6                         
+                     loadconfig.pl        11.6                         
+                     dirvish.conf.5       11.5                         
+                     dirvish.pl           11.7                         
+                     loadconfig.pl        11.5                         
+Removed duplicate pre-server: entry
+
+Record actual config files loaded in summary, not aliases.
+
+Change loadconfig so that if filename is a relative path it
+will be looked for in the vault and then the system-wide
+configuration directories but not current working directory.
+This should make things a little more cron-friendly.
+
+2003/07/10           dirvish.conf.5       11.4                         
+                     loadconfig.pl        11.4                         
+                     dirvish.8            11.2                         
+                     loadconfig.pl        11.3                         
+                     dirvish.pl           11.6                         
+                     dirvish.conf.5       11.3                         
+enhanced file-exclude to search config dirs if relative path
+is used.
+
+Fixed loadconfig recursion control.
+
+STDio filehandle redirect fixed.
+
+2003/06/18           dirvish.pl           11.5                         
+                     dirvish.conf.5       11.2                         
+                     dirvish-expire.pl    11.4                         
+Made the exclude file available to pre-server
+						(James Neal)
+
+Improved error message.
+
+2003/05/27           install.sh           11.1       Dirvish-1.1.1        
+                     loadconfig.pl        11.2       Dirvish-1.1.1        
+                     COPYING              11.1       Dirvish-1.1.1        
+                     FAQ.html             11.1       Dirvish-1.1.1        
+                     INSTALL              11.1       Dirvish-1.1.1        
+                     RELEASE.html         11.2       Dirvish-1.1.1        
+                     TODO.html            11.2       Dirvish-1.1.1        
+                     dirvish-expire.8     11.1       Dirvish-1.1.1        
+                     dirvish-expire.pl    11.3       Dirvish-1.1.1        
+                     dirvish-locate.8     11.2       Dirvish-1.1.1        
+                     dirvish-locate.pl    11.3       Dirvish-1.1.1        
+                     dirvish-runall.8     11.1       Dirvish-1.1.1        
+                     dirvish-runall.pl    11.2       Dirvish-1.1.1        
+                     dirvish.8            11.1       Dirvish-1.1.1        
+                     dirvish.conf.5       11.1       Dirvish-1.1.1        
+                     dirvish.pl           11.4       Dirvish-1.1.1        
+Dirvish 1.1.1
+
+2003/05/22           dirvish.pl           11.3                         
+                     TODO.html            11.1                         
+Fixed meta-perm error resulting in perms of 000.
+
+2003/05/20           loadconfig.pl        11.1                         
+                     dirvish-expire.pl    11.2                         
+                     dirvish.pl           11.2                         
+Cleaned up warnings and error in file-exclude.
+
+2003/05/19           dirvish-locate.8     11.1                         
+                     dirvish-locate.pl    11.2                         
+                     RELEASE.html         11.1                         
+Changed pattern handling to make more intuitive and
+flexible.
+
+2003/05/18           dirvish-expire.pl    11.1                         
+                     dirvish-locate.pl    11.1                         
+                     dirvish-runall.pl    11.1                         
+                     dirvish.pl           11.1                         
+                     install.sh           11.0       Dirvish-1.1        
+                     loadconfig.pl        11.0       Dirvish-1.1        
+                     RELEASE.html         11.0       Dirvish-1.1        
+                     TODO.html            11.0       Dirvish-1.1        
+                     dirvish-expire.8     11.0       Dirvish-1.1        
+                     dirvish-expire.pl    11.0       Dirvish-1.1        
+                     dirvish-locate.8     11.0       Dirvish-1.1        
+                     dirvish-locate.pl    11.0       Dirvish-1.1        
+                     dirvish-runall.8     11.0       Dirvish-1.1        
+                     dirvish-runall.pl    11.0       Dirvish-1.1        
+                     dirvish.8            11.0       Dirvish-1.1        
+                     dirvish.conf.5       11.0       Dirvish-1.1        
+                     dirvish.pl           11.0       Dirvish-1.1        
+                     COPYING              11.0       Dirvish-1.1        
+                     FAQ.html             11.0       Dirvish-1.1        
+                     INSTALL              11.0       Dirvish-1.1        
+Fixed version info on patches.
+
+Tagging 1.1 release
+
+2003/05/06           dirvish-runall.pl    1.16       Dirvish-1.1rc2        
+                     dirvish.8            1.12       Dirvish-1.1rc2        
+                     dirvish.conf.5       1.34       Dirvish-1.1rc2        
+                     dirvish.pl           1.51       Dirvish-1.1rc2        
+                     install.sh           1.9        Dirvish-1.1rc2        
+                     loadconfig.pl        1.6        Dirvish-1.1rc2        
+                     COPYING              1.4        Dirvish-1.1rc2        
+                     FAQ.html             1.17       Dirvish-1.1rc2        
+                     INSTALL              1.13       Dirvish-1.1rc2        
+                     RELEASE.html         1.4        Dirvish-1.1rc2        
+                     TODO.html            1.36       Dirvish-1.1rc2        
+                     dirvish-expire.8     1.9        Dirvish-1.1rc2        
+                     dirvish-expire.pl    1.20       Dirvish-1.1rc2        
+                     dirvish-locate.8     1.3        Dirvish-1.1rc2        
+                     dirvish-locate.pl    1.3        Dirvish-1.1rc2        
+                     dirvish-runall.8     1.7        Dirvish-1.1rc2        
+                     description          1.7                          
+                     TODO.html            1.35                         
+Tagging 1.1rc2
+
+Dropped the description file.
+
+Internally split the TODO list into TODO and wish lists.
+
+2003/05/02           TODO.html            1.34                         
+                     dirvish-locate.8     1.2                          
+                     dirvish.pl           1.50                         
+                     TODO.html            1.33                         
+                     dirvish-locate.pl    1.2                          
+                     dirvish.conf.5       1.33                         
+Implemented tree aliases.
+
+2003/05/01           dirvish.pl           1.49                         
+Fixed typos in error message.
+
+2003/04/30           FAQ.html             1.16                         
+Tightened wording in section one of the FAQ.
+
+2003/04/28           dirvish.conf.5       1.32                         
+                     install.sh           1.8                          
+                     FAQ.html             1.15                         
+                     TODO.html            1.32                         
+                     dirvish-locate.8     1.1                          
+                     dirvish-locate.pl    1.1                          
+                     dirvish.8            1.11                         
+                     dirvish.conf.5       1.31                         
+Typo in dirvish.conf.5
+
+Created the dirvish-locate command.
+Dirvish-locate scans the index files to locate
+matching paths and displays their history.
+Very helpful for restores.
+
+2003/04/24           dirvish.conf.5       1.30                         
+                     dirvish.pl           1.48                         
+Added log: option to allow compression of image logs.
+
+2003/04/23           install.sh           1.7                          
+                                          1.6                          
+                     INSTALL              1.12                         
+Provide non-zero exit on error.
+
+typos in install.sh
+
+2003/04/19           dirvish-expire.8     1.8                          
+                     dirvish-runall.8     1.6                          
+                     dirvish.conf.5       1.29                         
+                     INSTALL              1.11       Dirvish-1.1rc1        
+                     RELEASE.html         1.3        Dirvish-1.1rc1        
+                     TODO.html            1.31       Dirvish-1.1rc1        
+                     description          1.6        Dirvish-1.1rc1        
+                     dirvish-expire.8     1.7        Dirvish-1.1rc1        
+                     dirvish-expire.pl    1.19       Dirvish-1.1rc1        
+                     dirvish-runall.8     1.5        Dirvish-1.1rc1        
+                     dirvish-runall.pl    1.15       Dirvish-1.1rc1        
+                     dirvish.8            1.10       Dirvish-1.1rc1        
+                     dirvish.conf.5       1.28       Dirvish-1.1rc1        
+                     dirvish.pl           1.47       Dirvish-1.1rc1        
+                     install.sh           1.5        Dirvish-1.1rc1        
+                     loadconfig.pl        1.5        Dirvish-1.1rc1        
+                     COPYING              1.3        Dirvish-1.1rc1        
+                     FAQ.html             1.14       Dirvish-1.1rc1        
+                     loadconfig.pl        1.4                          
+                     COPYING              1.2                          
+                     FAQ.html             1.13                         
+                     INSTALL              1.10                         
+                     RELEASE.html         1.2                          
+                     TODO.html            1.30                         
+                     description          1.5                          
+                     dirvish-expire.8     1.6                          
+                     dirvish-expire.pl    1.18                         
+                     dirvish-runall.8     1.4                          
+                     dirvish-runall.pl    1.14                         
+                     dirvish.8            1.9                          
+                     dirvish.conf.5       1.27                         
+                     dirvish.pl           1.46                         
+                     install.sh           1.4                          
+                     INSTALL              1.9                          
+                     RELEASE              1.4                          
+                     RELEASE.html         1.1                          
+                     TODO.html            1.29                         
+                     dirvish.conf.5       1.26                         
+Spelling fixes.
+
+Fix version stuff for 1.1rc2
+
+Tagging 1.1rc1
+
+fix errors in INSTALL instructions.
+
+Convert release notes to html.
+
+Manpage rephrasing
+
+2003/04/16           dirvish.pl           1.45                         
+                                          1.44                         
+                                          1.43                         
+Report failure to write to index.
+
+Bug fix: remove known bools from discrete summary.
+
+Report errors, not just fatal ones.
+
+2003/04/10           dirvish.pl           1.42                         
+Moved permissions option to top of boolean list.
+
+2003/04/09           dirvish.pl           1.41                         
+more status adjustments?
+
+2003/04/08           dirvish-expire.pl    1.17                         
+                     dirvish.pl           1.40                         
+                     INSTALL              1.8                          
+                     install.sh           1.3                          
+                     dirvish.pl           1.39                         
+                     dirvish.conf.5       1.25                         
+                     RELEASE              1.3                          
+                     dirvish.conf.5       1.24                         
+                     dirvish.pl           1.38                         
+                     loadconfig.pl        1.3                          
+                     FAQ.html             1.12                         
+Small change in status 20
+
+install.sh is a little more verbose and cleans up if asked.
+
+Added perms option to support non-POSIX clients.
+
+Isolated stats into its own option to allow users to disable
+them.
+
+The rsync command is now invoked as an array for better
+argument passing.
+
+Clarity and typo fixes in FAQ.
+
+2003/04/07           dirvish.pl           1.37                         
+get fatal error messages to stderr to indicate branch.
+
+2003/04/04           FAQ.html             1.11                         
+                     TODO.html            1.28                         
+                     dirvish.conf.5       1.23                         
+                     dirvish.pl           1.36                         
+                     loadconfig.pl        1.2                          
+                     dirvish-expire.pl    1.16                         
+                     dirvish.conf.5       1.22                         
+                     dirvish-expire.pl    1.15                         
+                     dirvish-runall.pl    1.13                         
+                     dirvish.8            1.8                          
+                     dirvish.conf.5       1.21                         
+                     dirvish.pl           1.35                         
+                     install.sh           1.2                          
+                     loadconfig.pl        1.1                          
+Added the SET and UNSET config directives for booleans
+
+added dry-run alias for no-run
+
+Better description of list vs scalar config format.
+
+laodconfig has been consolidated.
+
+2003/04/03           dirvish-expire.pl    1.14                         
+                     dirvish-runall.pl    1.12                         
+                     dirvish.pl           1.34                         
+                     dirvish-expire.pl    1.13                         
+                     dirvish-runall.pl    1.11                         
+                     dirvish.pl           1.33                         
+                     INSTALL              1.7                          
+                     TODO.html            1.27                         
+                     dirvish-expire.pl    1.12                         
+                     dirvish-runall.pl    1.10                         
+                     dirvish.pl           1.32                         
+                     install.sh           1.1                          
+Try again
+
+Fixing permissions.
+
+First version of install.sh
+
+2003/04/02           dirvish-runall.pl    1.9                          
+                     dirvish-expire.pl    1.11                         
+                     dirvish.pl           1.31                         
+                     dirvish-expire       1.12                         
+                     dirvish-runall       1.10                         
+                     dirvish              1.32                         
+renaming to *.pl for source consolidation by linking with make
+
+Renameing to *.pl support source code consolidation with
+make.
+
+2003/03/29           dirvish              1.31                         
+                                          1.30                         
+Print to stderr on non-check fatal errors.
+
+Vastly improved error handling.  Now have some recognition
+of exit codes from rsync.
+
+2003/03/28           dirvish              1.29                         
+Fixed rsync options handling error.
+
+2003/03/25           RELEASE              1.2                          
+                     dirvish              1.28                         
+                     dirvish-expire       1.11                         
+                     dirvish-expire.8     1.5                          
+                     dirvish-runall       1.9                          
+                     dirvish-runall.8     1.3                          
+                     dirvish.8            1.7                          
+                     dirvish.conf.5       1.20                         
+                     RELEASE              1.1                          
+                     TODO.html            1.26                         
+Restructured config file nameing.
+
+The master config file is now /etc/dirvish/master.conf
+and the config file used if a vault is specified without a
+branch is default.conf.
+
+Added release notes file.
+
+2003/03/22           dirvish              1.27                         
+                     dirvish.conf.5       1.19                         
+Fixed (hopfully) pre-client and post-client to allow client
+to be on the same server.
+
+Check status of pre and post scripts and handle failure
+appropriately.
+
+2003/03/20           dirvish              1.26                         
+                     TODO.html            1.25                         
+                     dirvish              1.25                         
+                     dirvish.conf.5       1.18                         
+                     TODO.html            1.24                         
+                     dirvish.conf.5       1.17                         
+Numeric IDs are now optional
+
+Changed documentation to reflect list/scalar limitation of
+loadconfig.
+
+2003/03/17           dirvish.conf.5       1.16                         
+                     TODO.html            1.23                         
+                     dirvish.conf.5       1.15                         
+Client same as server note.
+
+Added to BUGS the single/multi value parser bug.
+
+meta-perm security note.
+
+2003/03/16           INSTALL              1.6                          
+                     FAQ.html             1.10                         
+Reflect changes in install procedure.
+
+Minor fixes to FAQ including...
+	mbox vs. maildir and logfile rotation
+	NFS over UDP error rates
+	spelling adjustments (brit vs US?)
+	punctuation and grammer fixes.
+
+2003/01/28           FAQ.html             1.9                          
+                     INSTALL              1.5                          
+                     TODO.html            1.22                         
+rsync 2.5.6 is released and fully supports dirvish without
+patches.
+
+2002/12/28           dirvish-expire       1.10                         
+Fixed sort order.
+
+2002/11/27           dirvish              1.24                         
+remove --force
+
+Doesn't apply because we aren't doing an rsync in-place.
+
+2002/11/20           dirvish              1.23                         
+Added --force to the default rsync options to deal with
+directories replaced by symlinks.
+
+2002/11/12           FAQ.html             1.8                          
+                     TODO.html            1.21                         
+                     dirvish.conf.5       1.14                         
+Minor documentation updates
+
+2002/10/29           TODO.html            1.20                         
+                     dirvish              1.22                         
+                     dirvish-expire       1.9                          
+                     dirvish-runall       1.8                          
+                     dirvish              1.21                         
+                                          1.20                         
+                     dirvish-expire       1.8                          
+                     dirvish-runall       1.7                          
+                     TODO.html            1.19                         
+added $SYSCONFDIR to specify /etc location.
+
+Corrected "image already exists" error message.
+
+Stop printing line numbers when dying.
+
+User feedback and a couple of other ideas added to TODO
+
+2002/09/27           description          1.4                          
+                     FAQ.html             1.7                          
+                                          1.6                          
+Enlarged disclaimer
+
+Documentation updates.
+
+link-dest option now in rsync CVS.
+
+2002/09/24           dirvish              1.19                         
+fixed bug in image-temp renameing.
+
+2002/08/08           TODO.html            1.18                         
+                     dirvish              1.18                         
+                     TODO.html            1.17                         
+                     dirvish              1.17                         
+                     dirvish-runall.8     1.2                          
+pre/post client scripts won't try to cd srctree if using
+rsyncd on client.
+
+Relocated vault:branch processing to getopt anon functions.
+
+2002/05/15           TODO.html            1.16                         
+                     dirvish              1.16                         
+                     dirvish.conf.5       1.13                         
+Added rsync-options field
+
+Fixed typos and older perl compatability issues.
+
+2002/05/14           TODO.html            1.15                         
+                     dirvish              1.15                         
+                     dirvish.conf.5       1.12                         
+If rsync errors are detected they will accumulate in
+rsync_error for each run.
+
+Added password-file field to dirvish.conf for rsyncd based
+transfer and enhanced tree: documentation to indicate
+support for same.
+
+2002/05/07           TODO.html            1.14                         
+                     dirvish-runall       1.6                          
+                     dirvish-runall.8     1.1                          
+Added commandline processing to dirvish-runall so it can now
+read Runall: parameter from an arbitrary file.
+
+Documented dirvish-runall
+
+2002/05/01           TODO.html            1.13                         
+                     dirvish              1.14                         
+                     dirvish-expire       1.7                          
+                     dirvish-expire.8     1.4                          
+                     dirvish.8            1.6                          
+                     dirvish.conf.5       1.11                         
+Added nroff formatting to manpages.
+
+Small fixes.
+
+2002/04/28           TODO.html            1.12                         
+                     dirvish              1.13                         
+                     dirvish-expire       1.6                          
+                     dirvish-expire.8     1.3                          
+                     dirvish-runall       1.5                          
+                     dirvish.conf.5       1.10                         
+                     dirvish              1.12                         
+                     TODO.html            1.11                         
+                     dirvish              1.11                         
+dirvish-expire changes:
+	added Status field in summary so dirvish can tell if
+	an image is good.
+
+	Added logic to dirvish-expire so that it won't delete last
+	good image on a branch.  Without this if backups fail for
+	several days in a row it could get sticky doing a restore and
+	you would have to rerun dirvish --init which is expensive.
+
+... now handling errors with network failure.
+
+Fixed infinite loop around error retries.
+
+now handles
+
+2002/04/27           TODO.html            1.10                         
+                     dirvish              1.10                         
+                     dirvish-expire       1.5                          
+                     dirvish.8            1.5                          
+                     dirvish.conf.5       1.9                          
+
+Changed calculated values in summary to have initcap lables.
+
+WARNING:  This breaks backward compatability for dirvish-expire.
+WARNING:  expire: and image: have been changed to Expire: and Image:
+
+Added "summary" option to allow short or long summaries with
+@summary_fields holding list of ordered fields to be in
+short summaries.
+
+Added new summary fields "Enabled" and "Disabled" to report switch values.
+
+2002/04/25           INSTALL              1.4                          
+                     TODO.html            1.9                          
+                     dirvish              1.9                          
+                     dirvish.8            1.4                          
+                     dirvish.conf.5       1.8                          
+added rsh: parameter.
+
+2002/04/24           TODO.html            1.8                          
+                     dirvish              1.8                          
+                     dirvish.conf.5       1.7                          
+added index: configuration parameter.
+
+2002/04/22           FAQ.html             1.5                          
+                     INSTALL              1.3                          
+                     TODO.html            1.7                          
+                     description          1.3                          
+                     dirvish              1.7                          
+                     dirvish-expire       1.4                          
+                     dirvish-runall       1.4                          
+                     dirvish.conf.5       1.6                          
+minor tweaks for expire: field in summary files
+
+spellcheck on docs and some updates to INSTALL and
+description to reflect changes.
+
+Note: Changes to TODO and FAQ and some other documentation
+are not recorded in changelogs.
+
+2002/04/20           TODO.html            1.6                          
+                     dirvish              1.6                          
+                     dirvish.conf.5       1.5                          
+Added config: parameter to loadconfig.
+
+loadconfig now checks for config file loops.
+
+2002/04/19           TODO.html            1.5                          
+                     dirvish              1.5                          
+                     dirvish-expire       1.3                          
+expire: in summary file now has two parts preserving intent.
+
+2002/04/18           FAQ.html             1.4                          
+                     TODO.html            1.4                          
+                     description          1.2                          
+                     dirvish              1.4                          
+                     dirvish-runall       1.3                          
+                     dirvish.8            1.3                          
+                     dirvish.conf.5       1.4                          
+Added loop structure around rsync execution.
+Now it can loop for correctable errors.
+
+Cleanup of pre and post script using runscript().
+
+renamed dirvish.runall to dirvish-runall,
+	Added Runall: parameter to global conf.
+
+2002/04/14           FAQ.html             1.3                          
+                     TODO.html            1.3                          
+                     dirvish              1.3                          
+                     dirvish.conf.5       1.3                          
+added pre-server, pre-client, post-client, post-server
+config fields.
+
+added ID keywords
+
+branches:  1.1.1;
+Initial revision
+
+Dirvish backup system
