@@ -1,0 +1,46 @@
+Backing up Windows machines using smbclient
+
+You can use the pre-server and post-server options in your dirvish.conf
+to mount and umount Windows shares. Your c:\ folder must be exported
+(as read only, of course).
+
+-------------------------------------------------------------------------
+client: localhost
+tree: /mnt/dirvish/<mymachinename>/
+pre-server: /usr/local/bin/mount-win-share <mymachinename> 
+     username=<myuser> password=<mypass> ip=mymachinenameorip
+post-server: /usr/local/bin/umount-win-share <mymachinename>
+-------------------------------------------------------------------------
+
+The password option is just an example. You are better off using
+password files, etc.
+
+/usr/local/bin/mount-win-share
+-------------------------------------------------------------------------
+#!/bin/sh
+
+# If this exits with a non-zero value, then dirvish won't continue.
+MACHINE=$1  
+shift  # Remove machine name from argument list
+if [ ! -d /mnt/dirvish/${MACHINE} ]; then
+  # Make a directory to mount at; otherwise exit with error
+  mkdir -p /mnt/dirvish/${MACHINE}  || exit 1  
+fi
+
+# Mount smbclient share (passing any arguments on to smbmount
+smbmount //${MACHINE}/c /mnt/dirvish/${MACHINE} -o ro "$@" || exit 1
+---------------------------------------------------------------------------
+
+/usr/local/bin/umount-win-share
+---------------------------------------------------------------------------
+#!/bin/sh
+
+MACHINE=$1  
+umount /mnt/dirvish/${MACHINE}
+---------------------------------------------------------------------------
+
+History
+
+Jason Cater  08/13/04   Initial Script added.
+
+

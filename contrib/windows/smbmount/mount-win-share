@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# If this exits with a non-zero value, then dirvish won't continue.
+MACHINE=$1  
+shift  # Remove machine name from argument list
+if [ ! -d /mnt/dirvish/${MACHINE} ]; then
+  # Make a directory to mount at; otherwise exit with error
+  mkdir -p /mnt/dirvish/${MACHINE}  || exit 1  
+fi
+
+# Mount smbclient share (passing any arguments on to smbmount
+smbmount //${MACHINE}/c /mnt/dirvish/${MACHINE} -o ro "$@" || exit 1
+
