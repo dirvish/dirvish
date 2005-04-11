@@ -8,6 +8,7 @@
 # Last Changed by : $Author$
 # Stored as       : $HeadURL$
 
+V0.03 Keith Lofstrom  2005-Apr-10
 V0.02 Keith Lofstrom  2005-Feb-11
 V0.01 Keith Lofstrom  2005-Feb-10
 
@@ -26,36 +27,14 @@ things:
     through CPAN for appropriate modules that do the same thing.  
     That is more efficient, and more portable, and more readable.
 
-2)  The install is WAY broken.  I refactored the contents of loadconfig.pl
-    into the library dirvishlib.pl, and sucked in all other subroutines
-    as well.  Now, I would like to use MakeMaker and Makefile.pl to
-    do installs the "standard Perl way".  
-
-    The install should set $CONFDIR in dirvishlib.pl . 
+2)  The install has been changed to Module::Build.  I refactored the
+    contents of loadconfig.pl into the library dirvishlib.pl, and
+    sucked in all other subroutines as well.  These will live by
+    default in /usr/share/dirvish .
 
     Eventually, the install should also do testing.
 
-3)  I want to add a test for an environment variable for the master
-    configuration file in load_master_config ;  this should override
-    $CONFDIR .
-
-4)  I want to replace most all the tabs with 3 spaces.  I like some
-    indent, but a whole tab is too much in most places.  However, I
-    do NOT want to do a simple global replace;  It is important that
-    things are readable and comments line up, for example.  Whichever
-    way we go, everything should look the same.
-
-5)  It is possible to embed pod in the programs.  This might be a good
-    place for design notes.
-
-6)  I want a heck of a lot more documentation on how this thing works.
-
-7)  I want subversion tags for version numbers.
-
-8)  CHANGELOG, INSTALL, TODO.pod, RELEASE.pod, and FAQ.pod all need
-    some rework.  I also want a design document.
-
-MORE LATER
+3)  I want a heck of a lot more documentation on how this thing works.
 
 
 Notes:

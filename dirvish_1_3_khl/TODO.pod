@@ -36,7 +36,7 @@ relative path use the config-file search function (when written).
 
 =item * Add a --retry option for retrying a failed dirvish image.
 
-This would require pre-existance of destination image.
+This would require pre-existence of destination image.
 
 Moves summary, log and rsync_error files into try.# directories.
 

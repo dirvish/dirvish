@@ -8,9 +8,24 @@
 # Last Changed by : $Author$
 # Stored as       : $HeadURL$
 
-# THIS FILE NEEDS TO CHANGE FOR version 1.3
-
 =head1 DIRVISH RELEASE NOTES
+
+=head2 Dirvish version 1.2.1 released 18 February 2005
+
+=over
+
+=item * Corrected ANOTHER logic inversion bug in B<pre-client> and
+B<post-client> that resulted in the wrong working directory.
+
+=item * Changed rsync code 24 from error to warning.
+
+=item * Changed == to = in the install script.
+
+=item * Allow the use of spaces protected by a backslash in the source
+tree name.
+
+=back
+
 
 =head2 Dirvish version 1.2 released 24 February 2003
 
@@ -20,7 +35,7 @@
 B<post-client> that resulted in the scripts running on the server. They
 will now run on the client as intended.
 
-=item * LIcense changed to OSL.
+=item * License changed to OSL.
 
 =back
 

@@ -1,3 +1,49 @@
+CHANGELOG
+
+2005/04/10           Build.PL   	  13.1       dirvish-1.3.1
+                     COPYING              13.1       dirvish-1.3.1
+                     debian.howto.pod     13.1       dirvish-1.3.1
+                     dirvish.conf.pod     13.1       dirvish-1.3.1
+                     dirvish-expire.PL    13.1       dirvish-1.3.1
+                     dirvish-expire.pod   13.1       dirvish-1.3.1
+                     dirvishlib.pl        13.1       dirvish-1.3.1
+                     dirvish-locate.PL    13.1       dirvish-1.3.1
+                     dirvish-locate.pod   13.1       dirvish-1.3.1
+                     dirvish.PL           13.1       dirvish-1.3.1
+                     dirvish.pod          13.1       dirvish-1.3.1
+                     dirvish-runall.PL    13.1       dirvish-1.3.1
+                     dirvish-runall.pod   13.1       dirvish-1.3.1
+                     FAQ.pod              13.1       dirvish-1.3.1
+                     INSTALL.pod          13.1       dirvish-1.3.1
+                     README               13.1       dirvish-1.3.1
+                     RELEASE.pod          13.1       dirvish-1.3.1
+                     TODO.pod             13.1       dirvish-1.3.1
+
+Major changes.  The install process has been changed to Build.PL
+(using Module::Build) instead of the old shell script install.sh . 
+The old "loadconfig.pl" file has been refactored into the library
+"dirvishlib.pl", which is stored in /usr/share/dirvish and "use"d 
+by each of the applications.  The applications themselves have a
+header added that tells perl where to find this library, and where
+to find the master configuration file. These locations are settable
+during install.  Finally, much of the documentation has been converted
+into perl ".pod" format, which is converted at install time into .man
+and .html formats, some of which is stored in /usr/share/doc/dirvish/. 
+All install locations can be controlled at install time by setting
+command line options to Build.pl or the subsequent Build install .
+
+
+
+2005/03/31           dirvish.pl           12.1       dirvish-1.2.1
+                     INSTALL              12.1       dirvish-1.2.1
+                     install.sh           12.1       dirvish-1.2.1
+                     RELEASE.html         12.1       dirvish-1.2.1
+ 
+Changed by hand by Keith Lofstrom - haven't learned how to write one of
+these things from Subversion yet (and we don't have jw's original cvs
+tree, sigh).  See the release notes for more info.
+
+
 2004/02/25           dirvish.conf.5       12.0       Dirvish-1.2        
                      dirvish.pl           12.0       Dirvish-1.2        
                      install.sh           12.0       Dirvish-1.2        

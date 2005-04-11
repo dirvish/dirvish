@@ -8,7 +8,6 @@
 # Last Changed by : $Author$
 # Stored as       : $HeadURL$
 
-$CONFDIR = "/etc/dirvish";
 $VERSION = "1.3khl";
 
 #########################################################################
