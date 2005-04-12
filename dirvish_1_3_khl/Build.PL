@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 # Build.PL Script for dirvish
-# Version 0.2,  Keith Lofstrom,  2005-Apr-10
+# Version 0.3,  Keith Lofstrom,  2005-Apr-11
 #
 # This install file is neither complete nor well tested;  it is a
 # placeholder to gather comments about my probable misuse of Module::Build . 
@@ -10,15 +10,19 @@
 #
 #  ./Build.PL <options>
 #  ./Build
-#  ./Build install <options>
+#  ./Build install 
 #
 # The default install locations are given in the "install_path" hash.
 # You can change these locations with options on the command line of
-# either the Build.PL or Build install step, for example:
+# Build.PL, for example:
 #
 #       --install_path share=/usr/local/share
 #       --install_path sbin=/usr/local/sbin
 #
+# Because the "share" and the "config" locations are used as part of
+# the re-writing of the dirvish application scripts, these must be
+# set when Build.PL runs, meaning that the options cannot be added
+# later in the process.
 
 use strict                 ;
 use Module::Build 0.26     ; # Debian will need to know about dependency
