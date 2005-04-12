@@ -105,7 +105,7 @@ sub process_dirvish_sbin_files {
       "# these lines prepended by $0\n",
       "                             \n",
       "\$CONFDIR = $conf;           \n",
-      "use        $share/$library;  \n",
+      "require    $share/$library;  \n",
       "#----------------------------\n"
    );
 
