@@ -1,4 +1,4 @@
-# dirvish
+# dirvish.PL
 # 1.3.X series
 # Copyright 2005 by the dirvish project
 # http://www.dirvish.org
@@ -27,7 +27,7 @@ my %CodeID =
     ( Rev    => '$Rev: 22 $'     ,
       Date   => '$Date: 2005-03-27 22:13:42 -0800 (Sun, 27 Mar 2005) $'    ,
       Author => '$Author: keithl $'  ,
-      URL    => '$HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/dirvish $' ,
+      URL    => '$HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/dirvish.PL $' ,
     );
 
 $VERSION =   $CodeID{URL};

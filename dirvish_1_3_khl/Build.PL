@@ -1,6 +1,11 @@
 #!/usr/bin/perl -w
 # Build.PL Script for dirvish
-# Version 0.4,  Keith Lofstrom,  2005-Apr-12
+# Version 0.5,  Keith Lofstrom,  2005-Apr-12
+#
+# Last Revision   : $Rev: 22 $
+# Revision date   : $Date: 2005-03-27 22:13:42 -0800 (Sun, 27 Mar 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/Build.PL $
 #
 # Dirvish is installed with the following three step process:
 #
@@ -68,7 +73,7 @@ sub pathdir {
 # We need to add the location of the /config file/ and of
 # the /library/ to each application.  
 
-sub process_sbin_files {
+sub process_dirvish_sbin_files {
    my ($self)      = @_;
 
    # make the header ----
@@ -92,7 +97,7 @@ sub process_sbin_files {
 
    # modify the files ----
 
-   my $files = $self->pathdir( 'sbin' );
+   my $files = $self->pathdir( 'dirvish_sbin' );
 
    while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
       open( SOURCEFILE, "<$sourcefile" )
@@ -112,9 +117,9 @@ sub process_sbin_files {
 #--------------------------------------------------------------
 # make man pages out of pod files
 
-sub process_adminman_files {
+sub process_dirvish_manify_files {
    my ($self)      = @_;
-   my $files       = $self->pathdir( 'adminman' );
+   my $files       = $self->pathdir( 'dirvish_manify' );
    use  Pod::Man ;
 
    my $parser      = Pod::Man->new( section => 1 );
@@ -130,9 +135,9 @@ sub process_adminman_files {
 #---------------------------------------------------------------
 # make html pages out of pod files
 
-sub process_adminhtml_files {
+sub process_dirvish_htmlify_files {
    my ($self)      = @_;
-   my $files       = $self->pathdir( 'adminhtml' );
+   my $files       = $self->pathdir( 'dirvish_htmlify' );
    use  Pod::Html ;
 
    while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
@@ -175,15 +180,15 @@ my $build = $class->new (
 
    install_path => { 
       conf                  => '/etc/dirvish',
-      share                 => '/usr/share',
-      sharedoc              => '/usr/share/doc',
+      share                 => '/usr/share/dirvish',
+      sharedoc              => '/usr/share/doc/dirvish-1.3.1',
       man5dir               => '/usr/share/man/man5',
       man8dir               => '/usr/share/man/man8',
       sbin                  => '/usr/sbin' 
    },
 
    #precursor app files with prepended variables
-   sbin_files => {
+   dirvish_sbin_files => {
       'dirvish.PL'          => 'sbin/dirvish',
       'dirvish-locate.PL'   => 'sbin/dirvish-locate',
       'dirvish-expire.PL'   => 'sbin/dirvish-expire',
@@ -191,49 +196,49 @@ my $build = $class->new (
    },
 
    #pod files converted to man
-   adminman_files => {
+   dirvish_manify_files => {
       'dirvish.pod'         => 'man8dir/dirvish.8',
       'dirvish-locate.pod'  => 'man8dir/dirvish-locate.8',
       'dirvish-expire.pod'  => 'man8dir/dirvish-expire.8',
       'dirvish-runall.pod'  => 'man8dir/dirvish-runall.8',
       'dirvish.conf.pod'    => 'man5dir/dirvish.conf.5',
-      'RELEASE.pod'         => 'sharedoc/dirvish/RELEASE.man',
-      'INSTALL.pod'         => 'sharedoc/dirvish/INSTALL.man',
-      'FAQ.pod'             => 'sharedoc/dirvish/FAQ.man',
-      'TODO.pod'            => 'sharedoc/dirvish/TODO.man',
-      'debian.howto.pod'    => 'sharedoc/dirvish/debian.howto.man'
+      'RELEASE.pod'         => 'sharedoc/RELEASE.man',
+      'INSTALL.pod'         => 'sharedoc/INSTALL.man',
+      'FAQ.pod'             => 'sharedoc/FAQ.man',
+      'TODO.pod'            => 'sharedoc/TODO.man',
+      'debian.howto.pod'    => 'sharedoc/debian.howto.man'
    },
 
    #pod files converted to html (redundant, but more options for users)
-   adminhtml_files => {
-      'INSTALL.pod'         => 'sharedoc/dirvish/INSTALL.html',
-      'dirvish-runall.pod'  => 'sharedoc/dirvish/dirvish-runall.html',
-      'dirvish.conf.pod'    => 'sharedoc/dirvish/dirvish.conf.html',
-      'dirvish.pod'         => 'sharedoc/dirvish/dirvish.html',
-      'dirvish-expire.pod'  => 'sharedoc/dirvish/dirvish-expire.html',
-      'dirvish-locate.pod'  => 'sharedoc/dirvish/dirvish-locate.html',
-      'debian.howto.pod'    => 'sharedoc/dirvish/debian.howto.html',
-      'RELEASE.pod'         => 'sharedoc/dirvish/RELEASE.html',
-      'TODO.pod'            => 'sharedoc/dirvish/TODO.html',
-      'FAQ.pod'             => 'sharedoc/dirvish/FAQ.html'
+   dirvish_htmlify_files => {
+      'INSTALL.pod'         => 'sharedoc/INSTALL.html',
+      'dirvish-runall.pod'  => 'sharedoc/dirvish-runall.html',
+      'dirvish.conf.pod'    => 'sharedoc/dirvish.conf.html',
+      'dirvish.pod'         => 'sharedoc/dirvish.html',
+      'dirvish-expire.pod'  => 'sharedoc/dirvish-expire.html',
+      'dirvish-locate.pod'  => 'sharedoc/dirvish-locate.html',
+      'debian.howto.pod'    => 'sharedoc/debian.howto.html',
+      'RELEASE.pod'         => 'sharedoc/RELEASE.html',
+      'TODO.pod'            => 'sharedoc/TODO.html',
+      'FAQ.pod'             => 'sharedoc/FAQ.html'
    },
 
    #admin files with no processing
-   admin_files => {
-     'CHANGELOG'           => 'sharedoc/dirvish/CHANGELOG',
-     'COPYING'             => 'sharedoc/dirvish/COPYING',
-     'README'              => 'sharedoc/dirvish/README',
-     'dirvishlib.pl'       => 'share/dirvish/dirvishlib.pl'
+   dirvish_files => {
+     'CHANGELOG'           => 'sharedoc/CHANGELOG',
+     'COPYING'             => 'sharedoc/COPYING',
+     'README'              => 'sharedoc/README',
+     'dirvishlib.pl'       => 'share/dirvishlib.pl'
    }
 );
 
 #--------------------------------------------------------------------
 # move the files into appropriate places in blib
 
-$build->add_build_element('sbin');
-$build->add_build_element('adminman');
-$build->add_build_element('adminhtml');
-$build->add_build_element('admin');
+$build->add_build_element('dirvish_sbin');
+$build->add_build_element('dirvish_manify');
+$build->add_build_element('dirvish_htmlify');
+$build->add_build_element('dirvish');
 
 #-----------------------------------------------
 # make the Build script
