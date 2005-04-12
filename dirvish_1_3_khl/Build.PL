@@ -9,7 +9,7 @@
 #
 # Dirvish is installed with the following three step process:
 #
-#  ./Build.PL <options>
+#  perl Build.PL <options>
 #  ./Build
 #  ./Build install <options>
 #
@@ -24,8 +24,18 @@
 #
 #  ./Build fakeinstall <options>  # pretend install (no files moved)
 #
-#  ./Build realclean        # wipes out all the files made by ./Build.PL and
-#                           # ./Build ( _build, blib, and ./Build itself )
+#  ./Build realclean  # wipes out all the files made by ./Build.PL and
+#                     # ./Build ( _build, blib, and ./Build itself )
+#
+#  ./Build manifest   # makes Manifest file
+#
+#  ./Build dist    # after "manifest", makes a dirvish-XX.tar.gz file
+#                  # caveat:  requires YAML.pm to be installed, and this:
+#                  #
+#                  # use Module::Build::ConfigData ;
+#                  # Module::Build::ConfigData->set_feature(YAML_support => 1);
+#                  # Module::Build::ConfigData->write();
+#
 #
 # Someday, there will be a "./Build test" option, which will run tests
 # on both installation and basic usage of dirvish.  I do not know how
