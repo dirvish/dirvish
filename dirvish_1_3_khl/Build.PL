@@ -27,9 +27,13 @@
 #  ./Build realclean        # wipes out all the files made by ./Build.PL and
 #                           # ./Build ( _build, blib, and ./Build itself )
 #
-# This script will NEVER be run on a non-Unix machine.  It is
-# neither complete nor well tested;  it is a # placeholder to
-# gather comments about my probable misuse of Module::Build . 
+# Someday, there will be a "./Build test" option, which will run tests
+# on both installation and basic usage of dirvish.  I do not know how
+# to write those tests yet.
+#
+# This script will NEVER be run on a non-Unix machine.  It is neither
+# complete nor well tested;  it is a placeholder to gather comments
+# about my probable misuse of Module::Build . 
 # I'm pretty sure I am doing a lot of things the hard way.
 
 use strict                 ;
