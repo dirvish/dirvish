@@ -1,0 +1,21 @@
+Build.PL
+CHANGELOG
+COPYING
+debian.howto.pod
+dirvish-expire.PL
+dirvish-expire.pod
+dirvish-locate.PL
+dirvish-locate.pod
+dirvish-runall.PL
+dirvish-runall.pod
+dirvish.conf.pod
+dirvish.PL
+dirvish.pod
+dirvishlib.pl
+FAQ.pod
+INSTALL.pod
+MANIFEST			This list of files
+README
+RELEASE.pod
+TODO.pod
+Makefile.PL
