@@ -41,7 +41,7 @@ use Module::Build 0.26     ; # Debian will need to know about dependency
 my $class = Module::Build->subclass(code => <<'EOF');
 
 #--------------------------------------------------------------
-# pathdir
+# dirvish_pathdir
 #
 # process a set of files, changing the path to blib and
 # creating any necessary subdirectories, returning a hash
@@ -50,7 +50,7 @@ my $class = Module::Build->subclass(code => <<'EOF');
 # EXTREME KLUDGE WARNING!!!!
 # I do NOT know the right way to do this!!!
 
-sub pathdir {
+sub dirvish_pathdir {
    my ($self, $ext ) = @_;
    my $files = $self->_find_file_by_type($ext,  'lib');
 
@@ -80,7 +80,7 @@ sub process_dirvish_sbin_files {
 
    my $conf        = $self->{properties}{install_path}{conf}   ;
    my $share       = $self->{properties}{install_path}{share}  ;
-   my $library     = 'dirvish.pl' ;
+   my $library     = 'dirvishlib.pl' ;
    my $dat         = localtime ;
  
    my @apps_header = (
@@ -97,7 +97,7 @@ sub process_dirvish_sbin_files {
 
    # modify the files ----
 
-   my $files = $self->pathdir( 'dirvish_sbin' );
+   my $files = $self->dirvish_pathdir( 'dirvish_sbin' );
 
    while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
       open( SOURCEFILE, "<$sourcefile" )
@@ -119,7 +119,7 @@ sub process_dirvish_sbin_files {
 
 sub process_dirvish_manify_files {
    my ($self)      = @_;
-   my $files       = $self->pathdir( 'dirvish_manify' );
+   my $files       = $self->dirvish_pathdir( 'dirvish_manify' );
    use  Pod::Man ;
 
    my $parser      = Pod::Man->new( section => 1 );
@@ -137,7 +137,7 @@ sub process_dirvish_manify_files {
 
 sub process_dirvish_htmlify_files {
    my ($self)      = @_;
-   my $files       = $self->pathdir( 'dirvish_htmlify' );
+   my $files       = $self->dirvish_pathdir( 'dirvish_htmlify' );
    use  Pod::Html ;
 
    while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
