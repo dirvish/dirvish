@@ -1,0 +1,33 @@
+#!/usr/bin/perl -w
+# 
+#  yamlfix   Keith Lofstrom  2005-Apr-12
+#
+#  yamlfix checks for the availability of the YAML.pm module, and if
+#  yamlfix finds it, it sets the YAML_support configuration flag for
+#  Module::Build v0.26 .  This is a kludge and will not be needed
+#  when  Module::Build improves.
+#
+#  run as root, 'perl yamlfix' with no arguments
+#
+#  After this is run and working correctly, the "./Build dist" action
+#  should work.  If you are not building a distribution, you do not
+#  need to fix this flag.
+
+use strict;
+{
+   # keep scope local
+   use Module::Build::ConfigData ;
+   use File::Find ;
+   my $yaml;
+   sub yamlwanted { $yaml++ if $File::Find::name =~ '/YAML.pm' } ;
+   File::Find::find( \&yamlwanted , @INC );
+   if( $yaml ) {
+      Module::Build::ConfigData->set_feature(YAML_support => 1);
+      Module::Build::ConfigData->write();
+      print "$0: YAML support enabled\n";
+   } else {
+      print "$0: the './Build dist' action will not work until ";
+      print "you install YAML.pm\n";
+  }
+}
+
