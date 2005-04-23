@@ -98,7 +98,7 @@ sub process_dirvish_sbin_files {
    my $dat         = localtime ;
  
    my @apps_header = (
-      "#!/usr/bin/perl\n",                    #FIXME should this be config'ed?
+      "#!/usr/bin/perl\n",                    # FIXME should this be config'ed?
       "#--------------------------------------\n",
       "#Configured by Module::Build on $dat\n",
       "# these lines prepended by $0\n",
@@ -239,10 +239,20 @@ my $build = $class->new (
 
    #admin files with no processing
    dirvish_files => {
-     'CHANGELOG'           => 'sharedoc/CHANGELOG',
-     'COPYING'             => 'sharedoc/COPYING',
-     'README'              => 'sharedoc/README',
-     'dirvishlib.pm'       => 'share/dirvishlib.pm'
+      'INSTALL.pod'         => 'sharedoc/INSTALL.pod',
+      'dirvish-runall.pod'  => 'sharedoc/dirvish-runall.pod',
+      'dirvish.conf.pod'    => 'sharedoc/dirvish.conf.pod',
+      'dirvish.pod'         => 'sharedoc/dirvish.pod',
+      'dirvish-expire.pod'  => 'sharedoc/dirvish-expire.pod',
+      'dirvish-locate.pod'  => 'sharedoc/dirvish-locate.pod',
+      'debian.howto.pod'    => 'sharedoc/debian.howto.pod',
+      'RELEASE.pod'         => 'sharedoc/RELEASE.pod',
+      'TODO.pod'            => 'sharedoc/TODO.pod',
+      'FAQ.pod'             => 'sharedoc/FAQ.pod',
+      'CHANGELOG'           => 'sharedoc/CHANGELOG',
+      'COPYING'             => 'sharedoc/COPYING',
+      'README'              => 'sharedoc/README',
+      'dirvishlib.pm'       => 'share/dirvishlib.pm'
    }
 );
 
