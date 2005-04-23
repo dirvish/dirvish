@@ -159,9 +159,12 @@ EOUSAGE
 
 #------------------------------------------------------------------------
 
-reset_options();         # initialize the %$Options hash
+reset_options();            # initialize the %$Options hash
 
-load_master_config('f');    
+load_master_config('f');    # 'f' = ignore capitalized options, but why?
+
+# The capitalized options are "Runall" and "Dirvish" - if these options
+# aren't used by this program, why bother to suppress them?
 
 #---------------------------------------------------------------
 # Read the command line.  This puts data into the %$Options hash,
