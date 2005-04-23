@@ -68,15 +68,20 @@ GetOptions($Options, qw(
         version help
     )) or usage;
 
-if ($$Options{config})
+
+## reset_options leaves a coderef in $$Options{config}
+
+if ($$Options{config} and not ref $$Options{config} )
 {
-    $Config = loadconfig(undef, $$Options{config})
+    $Config = loadconfig(undef, $$Options{config});
 }
 else
 {
-    load_master_config() ;
+    $Config = load_master_config() ;
 }
 
+### question - why the heck to we construct the "Config" reference?
+### why not just use "Options"?;
 
 $$Config{Dirvish} ||= 'dirvish';
 

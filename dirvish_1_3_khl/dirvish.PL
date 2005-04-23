@@ -161,7 +161,7 @@ EOUSAGE
 
 reset_options();         # initialize the %$Options hash
 
-load_master_config();    
+load_master_config('f');    
 
 #---------------------------------------------------------------
 # Read the command line.  This puts data into the %$Options hash,

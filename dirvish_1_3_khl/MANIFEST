@@ -1,3 +1,10 @@
+back/Build.PL
+back/dirvish-expire.PL
+back/dirvish-locate.PL
+back/dirvish-runall.PL
+back/dirvish.PL
+back/dirvishlib.pm
+back/Makefile.PL
 Build.PL
 CHANGELOG
 COPYING
@@ -11,11 +18,13 @@ dirvish-runall.pod
 dirvish.conf.pod
 dirvish.PL
 dirvish.pod
-dirvishlib.pl
+dirvishlib.pm
 FAQ.pod
 INSTALL.pod
+Makefile.PL
 MANIFEST			This list of files
 README
 RELEASE.pod
 TODO.pod
-Makefile.PL
+yamlfix
+META.yml
