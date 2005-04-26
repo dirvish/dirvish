@@ -161,6 +161,8 @@ EOUSAGE
 
 reset_options();            # initialize the %$Options hash
 
+$$Options{'config'} = \&config;  # dirvish is different than other apps
+
 load_master_config('f');    # 'f' = ignore capitalized options, but why?
 
 # The capitalized options are "Runall" and "Dirvish" - if these options

@@ -239,8 +239,8 @@ sub reset_options
         'image-default'	=> '%Y%m%d%H%M%S',
         'rsh'		=> 'ssh'     ,
 	'summary'	=> 'short'   ,
-	'config'	=> \&config  ,
-      # 'config'	=> undef     ,
+        'config'	=> undef     ,
+      # 'config'	=> \&config  ,  # would be, if main dirvish app
         'client'	=> \&client  ,
         'branch'	=> \&branch  ,
         'vault'		=> \&vault   ,
