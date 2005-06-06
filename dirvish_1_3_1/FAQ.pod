@@ -1,0 +1,631 @@
+# FAQ.pod
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev: 21 $
+# Revision date   : $Date: 2005-02-20 20:24:53 -0800 (Sun, 20 Feb 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/FAQ.pod $
+
+=head1 Dirvish FAQ
+
+=head1 General Questions
+
+=head2 Is "Dirvish" an acronym?
+
+No.
+
+If you want to pretend it stands for B<Dir>ectory B<Vi>rtual B<S>torage
+B<H>ost or anything else you can invent go right ahead. I won't issue a
+fatwah.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 Why the name?
+
+Because what makes this backup system distinct is that it writes to
+spinning media. That reminded me of the whirling dervishes.
+
+At first I rejected this for several reasons but I finally decided that
+it was just too anti-PC and anti-(I<so-called>)-multi-cultural to
+resist.
+
+Think it of a fast rotating backup system and take it for a spin.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What is different about dirvish?
+
+Dirvish uses cheap disk space to maintain the appearance of multiple
+copies of source file trees. Traditional backup systems write to tape.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What about disk mirrors?
+
+Disk mirroring (RAID-1) and RAID-5 (not really mirroring) are good at
+protecting you from certain kinds of disk failure. Unfortunately they
+can't protect the data from human error, OS and hardware induced
+filesystem corruption, or anything that destroys the computer. For that
+you need a copy of the data that is isolated from the cause of failure.
+
+Ideally the backup server should be in a different building.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What about backups on tape?
+
+Look at the price of tape drives, robots and blank media. If you are
+already doing backups to tape, When was the last time a tape or tape
+drive failed? Compare that with the price and longevity of disk space,
+case and controllers.
+
+By putting your dirvish server in a separate location from your
+production servers it becomes an off-site backup.
+
+That said, you may still want to make tapes. With dirvish you can
+relegate tapes to off-site storage and long-term archive so you will
+make far fewer of them. And you can make the tapes from your backup
+server during working hours with no down-time.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What about network load?
+
+If you have used network backup systems you may have seen the backups
+saturate your network. I know I have. Dirvish shouldn't do that.
+
+Dirvish uses rsync for network transfer. Where an incremental tape
+backup requires only requires transmitting the changed files, dirvish
+only requires transmitting the changed parts of the changed files. So
+while the result is full backups every time, the volume of data sent is
+even less than incremental tape backups.
+
+In fact the volume of data transferred can be sufficiently low that
+backups over the internet are feasible.
+
+In some cases the network will actually be faster than the disk
+subsystems. When that is the case the B<whole-file> parameter will
+actually improve overall performance at the expense of network load.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 Why so many images, don't I only need one?
+
+In an ideal world you wouldn't need any backups. I don't always know
+that I need a given file restored on the day it gets trashed. Often it
+will take several days before I even notice it. Most users are much
+worse. Someone deletes or modifies a file or deletes a whole directory
+and it turns out a few weeks later that someone else still needed it.
+One or two versions just don't cut it.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What does dirvish cost and how is it licensed?
+
+Dirvish is free. The license is OSL.
+
+I would like to know if dirvish is helping so if you are using it
+please let me know. Also let me know about any bugs you find or
+improvements you might come up with. I would be particularly interested
+in getting statistics on real-world capacity requirements.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 Where can I get dirvish?
+
+The dirvish home is http://www.dirvish.org . Questions, patches, feedback,
+etc. can be sent to the mailing list at dirvish@dirvish.org .
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 I can't find an answer to my question!
+
+Look at the most recent FAQ, at ( http://www.dirvish.org/FAQ.html ).
+Look at the most recent man pages there, too.   Search the Wiki
+( http://www.dirvish.org/wiki ).  Search the mailing list with
+google "site:www.dirvish.org I<key words go here>".  Finally,
+look at the dirvish perl code itself;  you may not be able to read
+Perl, but you can search for an error string and make a pretty good
+guess as to where the program was when it threw and error.  And that,
+my friend, is why Open Source Software will I<Rule The World!>.
+
+If you still haven't answered your question, you can join the mailing
+list at ( http://www.dirvish.org/mailman/listinfo/dirvish ). 
+Before you make a fool of yourself, please read Eric S. Raymond's
+excellent essay "How To Ask Questions The Smart Way" at
+( http://www.catb.org/~esr/faqs/smart-questions.html ).
+
+When you finally I<do> get an answer to your question, you are not done.
+Please learn how to add content to the Wiki, and then place your
+question and answer in either http://www.dirvish.org/wiki?DirvishTips
+or  http://www.dirvish.org/wiki?DirvishUsers .  
+
+We help each other around here;  the cost of admission to this particular
+potluck is that you prepare something tasty that others can enjoy.  You 
+may not be able to write code, but you can write about your experiences!
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head1 Capacity Questions
+
+=head2 How much space do I need for dirvish?
+
+A reasonable rotation program should need about one and half to three
+times the space of the original filesystem. This is very dependent on
+the rate of change for a given directory tree and the number and
+age-range of images in the rotation.
+
+Consideration should be given to the nature and probable change rates
+of a given backup area and the value of older data. Project areas and
+home directories may have relatively low rates of change but are
+subject to sudden spikes and their data is important enough to retain
+for extended periods. Conversely /var has a high change rate but the
+data is really only valuable for one or two days. So a vault for /home
+might want thrice the space of the production area to hold images
+ranging from one to three months or longer while /var may only need
+fifty percent more space in its vault and be expired after 2 or three
+days.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 How should I build the filesystems for dirvish?
+
+Dirvish can back up almost any filesystem. Only the vaults on the
+backup server have any specific requirements.
+
+Only regular files will be shared between images. Device nodes,
+symlinks, directories and other file types will be recreated for each
+image. This means that there will be a lot more inodes used in a vault
+than the source filesystem.
+
+The best filesystem type for dirvish would be one that doesn't set a
+fixed number of inodes at build time. The vaults will also need to be
+built with a filesystem type that supports hard links.
+
+While a journaling filesystem is a recommended the journals can have an
+adverse affect on performance. Dirvish and dirvish-expire do a lot of
+filesystem meta-data changes. This will stress the journal which in
+some cases is not as well optimized as one would like. Experience has
+shown that some journaling filesystems perform extremely poorly under
+dirvish. While no benchmarks have been made the difference in speed has
+been as high as 10:1. I would not recommend data journaling.
+
+Using a filesystem type that allows resizing makes it much easier to
+adapt to the real world requirements of each backup set.
+
+If you are building filesystems with a fixed number of inodes such as
+UFS or ext2 you should create the filesystem with a bytes per inode
+value that is half or even just a quarter of what you would normally.
+Because directories will not be shared it may be good to use a smaller
+block or fragment size to reduce internal fragmentation.
+
+I would also recommend using RAID-5 arrays for the vaults. You are
+going to have a great deal of important data here and disk-fault
+tolerance is a good idea. RAID-5 isn't nearly as expensive as mirroring
+and should be more than fast enough. Logical Volume management is also
+a good idea for the vaults as you will probably wish to resize some of
+them over time.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 With so many images, won't it use too much disk?
+
+Because dirvish shares unchanged files between images the actual disk
+space used is considerably less than you might think. For most
+filesystems only a small percentage of files will change over a period
+of time.
+
+The B<dirvish-expire> utility will automatically delete old images
+based on their assigned expiration date. If you execute this regularly
+(see cron) each vault will soon reach a steady state where it grows
+very slowly in response to the growth of the clients.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 Could linking between images be limited by a maximum link count?
+
+Yes. But you are unlikely to ever come close to the limits.
+
+    Linux Filesystem	link limits
+    -------------------------------
+    xenix		126
+    sysv		126
+    minix		250
+    coherent		10,000
+    ufs			32,000
+    ext2		32,000
+    reiserfs		64,535
+    minix2		65,530
+    jfs  		65,535
+    xfs  		65,535 or 2,147,483,647
+
+I can remember a version of UFS that had a link count limit of 1023 but
+I doubt current versions are so limited. I haven't checked the
+commercial UNIXes but an examination of the 2.4 Linux kernel source
+shows that link counts are stored in an unsigned short so in theory
+would be limited to 65535. The 2.6 kernel is expected to raise this
+limit and use unsigned long (32 bit). Each filesystem type has its own
+limit as shown in the table. Performing a quick test I determined that
+indeed I could create exactly 32000 hard links of a file on ext2.
+
+What this means is that on most of the filesystems even if you had a
+file with 100 hard links (busybox perhaps) you could still support over
+300 images sharing those links.
+
+In the event you are using a filesystem type that has a risk of hitting
+the limit you could change hard links on the client to symlinks. None
+of these filesystems have limits lower than 126.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 How can I save space?
+
+First make sure you aren't backing up useless files. The exclude
+patterns can help there.
+
+Look at the dirvish logs. They will show you what is changing. When I
+first started using dirvish I found web browser caches were a constant
+source of change. There was no reason to back them up so I added
+exclude patterns to block them. Spool areas are similar sources of
+waste.
+
+Set reasonable B<expire-rule>s in the configuration files.
+
+Some applications provide choices regarding file layout. A particularly
+good example is email. Because a changed file is not shared large mbox
+mail folders that change daily can be responsible for a considerable
+amount of backup space. Transitioning to maildir format means more
+small files but those files can be shared across images as long as they
+remain in the same status and folder. Such applications often have
+global configuration files in which system administrator can set a
+desired default that most users will not override. Similarly there can
+be an advantage to rotating log files more often.
+
+Examine the logs. Some services will create log files in places you
+don't expect. Adding them to the exclude list is a workaround. Moving
+them to /var will correct the problem and make your system more robust.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 Why would dirvish suddenly need more space?
+
+Because dirvish saves space by sharing unchanged files across multiple
+images changing many files will cause dirvish's disk usage to spike.
+
+Some of the things that can cause this are:
+
+=over
+
+=item * updating a software package.
+
+=item * restoring a directory tree without preserving timestamps and
+permissions.
+
+=item * recursive chown, chgrp or chmod.
+
+=item * sometimes users will update lots of files all at once.
+
+=item * relocating or renaming a directory.
+
+=item * leaving a temporary file around overnight.
+
+=back
+
+It really is a good idea to have enough free space to weather a usage
+spike.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 I'm running out of space what do I do?
+
+Delete images.
+
+Usually it is the same files that change over and over. Because of this
+deleting intermediate images may save nearly as much space as deleting
+old images.
+
+Really old images can be archived to removable media and then deleted.
+
+Sometimes the pressure is transient. A spike may be the result of one
+image having captured a temporary file such as a web download. In such
+a case the spike will go away with that one image. If someone recently
+changed a large number of files that will cause a spike in the disk
+usage. Such a spike will form a new plateau until the older images are
+expired.
+
+If your rotation just won't fit examine your exclude lists, expiration
+rules and consider adding backup space.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What about compression?
+
+Compression is a wonderful thing but one of dirvish's primary goals is
+transparency. If dirvish compressed files you couldn't do a transparent
+restore.
+
+Because of the file sharing between images compressing individual
+images into compressed archives is unlikely to save you space and will
+break the transparency. Experience has shown that the disk usage of
+dirvish is vastly less than that of compressed snapshots.
+
+It may be worthwhile to use a filesystem that supports transparent
+compression such as e2compr for some vaults.
+
+It is worth remembering that more and more applications are storing
+their data in compressed formats such as jpg, ogg, mpeg and gzip'ed XML
+(office suites). If the files are already compressed it won't save
+space storing them on a compressed filesystem or compressing them
+externally. These compressed format files will also defeat the hardware
+compression found on tape drives.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What will dirvish do if it runs out of space?
+
+Dirvish will output a message to STDERR that it thinks it may have run
+out of space and will remove the incomplete destination tree. The
+meta-data including log files will be left to assist with debugging.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What should I do if dirvish runs out of space?
+
+First, delete any failed image. If dirvish actually runs out of space
+and cannot complete a backup image that image should be deleted. It
+will be missing files and have other problems that would cause
+successive images to not share correctly.
+
+You may wish to delete some of your images or enlarge your vault
+filesystem. That is of course your call.
+
+See the section on running out of space.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head1 Questions about use
+
+=head2 How much maintenance does dirvish require?
+
+Very little.
+
+Dirvish, dirvish-runall and dirvish-expire will report errors when
+detected. Running them under cron, even in quiet mode will still cause
+email notification on error.
+
+Dirvish-expire will use the expire options to manage the rotation of
+images automatically. That mainly just leaves monitoring the disk space
+to ensure that you don't run out of room and making archives.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 How do I restore from dirvish?
+
+Each image is a complete copy of what existed at the time it was made
+so all that is needed to restore from an image is to copy the files. It
+is essential to preserve ownership, permissions and modification time
+of restored files.
+
+Rsync is a very good way but scp or streaming tar or cpio archives from
+the backup server will work as well.
+
+It is also possible to do a read-only export of a dirvish vault using a
+network file system such as NFS or CIFS/SMB. This or network mounting
+the source directories on the backup server will allow the use of a
+simple copy command to restore files. It should be remembered that NFS
+over UDP does have a measurable error rate so exercise caution doing
+large restores over NFS. The permissions of all the files in a vault
+are the same as the source location so there is little security risk to
+doing so. It might however be better not to give users access to this
+as it will encourage lazy habits.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 How can I find what versions of my files exist?
+
+That is the purpose of the dirvish-locate command.
+
+You first need to identify the file you are looking for. Examine the
+source tree or one of the dirvish indexes (you instructed dirvish to
+create indexes, right?). Optimally you want a perl regex pattern that
+will only find the file you want.
+
+Let us suppose i'm looking for a version of my .muttrc file. I would
+use the pattern B</jw/.muttrc> The slashes have no special meaning and
+the pattern is anchored the at the end so this won't match a
+.muttrc.orig file. The dirvish-locate command would look like this:
+
+ # dirvish-locate home '/jw/.muttrc'
+ 2 matches in 29 images
+ /e/home/jw/.muttrc
+     Apr  9 18:38 030427, 030426, 030425, 030424, 030423, 030422, 030421
+                  030420, 030419, 030418, 030417, 030416, 030415, 030414
+                  030413
+     Mar 26 22:24 030406
+     Mar 26 22:24 030403, 030330
+     Mar 15 06:09 030323, 030316
+     Mar  9 17:26 030309
+     Jan 14 21:46 030223, 030216, 030209, 030202
+     Oct  5 18:20 030105, 021103
+     Oct  5 18:20 021006
+     Aug 17 20:15 020901
+
+From this we can see a partial history of that file. Now i don't have
+to look in every image to find the version i want. I can either pick a
+version or look at one image per version to decide which one i really
+want to restore.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 How can I make archives from dirvish?
+
+You can use any utility that will make an archive from a directory.
+Feel free to use tar, cpio or dump. It is even reasonable to burn CDs
+or DVDs if your data will fit. The nice thing is that this won't
+interact with the production systems so you can do this during working
+hours.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 Does dirvish support database backups?
+
+Dirvish supports arbitrary pre and post processing commands on the
+client and server. This means that you can pause a database during
+backups or have dirvish create a database dump just prior to backing up
+the dump directory.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What do I need to run dirvish?
+
+
+ Unix or Linux server
+ rsync version 2.6.3 or higher (earlier versions are insecure).
+ Perl 5 and these perl modules
+      File::Find                     # comes with perl 5.8.6 and later
+      POSIX                          # comes with perl 5.8.6 and later
+      Getopt::Long
+      Time::ParseDate
+      Time::Period
+
+The extra modules can be installed with CPAN:  
+
+ root# perl -MCPAN -e shell
+
+ cpan> install Getopt::Long  Time::ParseDate  Time::Period
+
+ (much verbiage omitted)
+ ...
+    /usr/bin/make install  -- OK
+ cpan> q
+
+ root#
+
+If the modules are already installed, the CPAN process will let you
+know that the modules are all up to date.
+
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 Can I use an rsync daemon?
+
+Dirvish can connect to an rsync daemon running on the clients just fine.
+Specifying the B<tree> parameter with a colon prefix will direct 
+dirvish to connect to an rsync daemon on the client.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What is a bank, a vault, a branch, and an image?
+
+A B<bank> is a directory that contains vaults (and B<only>) vaults.
+Don't put anything else in there (especially a file named I<summary>)
+or dirvish might get confused.  You can specify multiple banks in your
+B<master.conf> configuration file or other configuration files.  You
+can put other files and directories on the same disk, but not in
+the same bank directory with the vaults.
+
+A B<vault> is where a collection of B<images> are stored, along with
+configuration information, stored in the directory $VAULT/dirvish/  .
+
+An B<image> is the result of a dirvish backup operation, and (except
+for excluded files) appears to be a complete duplicate of the client
+directory structure at a particular time.  If you make nightly backups,
+there will be one image per night.
+
+A B<branch> is a way to save images from many clients that are very
+similar.  If you have three clients I<tom, dick>, and <jane> that have
+very similar /usr directories, you can backup them all into one vault
+by using branches.  Every night, you will add 3 images to the shared
+vault: I<tom-YYYY-MMDD-HHMM, dick-YYYY-MMDD-HHMM,> and
+I<jane-YYYY-MMDD-HHMM> .  
+
+The wiki ( http://www.dirvish.org/wiki?VaultBranch ) contains more
+information on banks, vaults, branches, and images.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 What's with the configuration file formatting?
+
+The parser for the configuration files is pretty simple minded. 
+The parser is unaware of dirvish keywords, it just saves information
+in a Perl hash for later processing.  The parser determines the
+difference between a single-valued item ( a boolean or scalar )
+or a multiple-valued item ( a list ) by the line breaks and white
+space in the configuration file.  All indented lines are treated
+as elements in a list, thus defining the first unindented line
+above that line as the name of a list (which is stored as a Perl
+array).  So if you have some configuration lines reading:
+
+ bank:  bank1 bank2 bank3        #wrong, should be different lines
+ index:                          #wrong
+        gzip                     #wrong, should be same line
+ exclude:                        #wrong
+ /proc/                          #wrong, should be indented
+ /tmp/foo/                       #wrong
+
+... the above lines will be interpreted as a scalar item named "bank"
+with a single value of "bank1 bank2 bank3", an array named "index"
+with one entry containing the value "gzip", and scalars with a value
+of zero named "exclude", "/proc/", and "/tmp/foo/"  .  Dirvish will
+get confused when it tries to process this, since it is expecting
+an array for bank and exclude, and a single scalar value for index.
+
+Instead, you should write your configuration lines to read:
+
+ bank:                           #right
+        bank1                    #right
+        bank2                    #right
+        bank3                    #right
+ index: gzip                     #right
+ exclude:                        #right
+        /proc/                   #right
+        /tmp/foo/                #right
+
+These will be properly interpreted as a 3 element array, a scalar,
+and a two element array.
+
+Remember, indents and line breaks mean specific things to dirvish.
+The configuration format is not free-form, you must follow the rules
+if dirvish is to interpret it correctly.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head2 Pre and Post configuration scripts
+
+These scripts are run before and after the actual dirvish run itself.
+They permit you to mount disks, start a server, open a port, or whatever
+else you might need to do prepare for or clean up after running dirvish
+for a single vault.
+
+The scripts run in the following order, for each vault:
+
+ pre-server
+ pre-client
+ dirvish --vault=$VAULT
+ post-client
+ post-server
+
+Dirvish-runall makes multiple calls to dirvish, once per vault, and
+the scripts will be run once per vault.  You can place the
+B<pre-server:, pre-client:, post-server:, and post-client:> lines
+in B<master.conf>, and run the same scripts on every vault, or you
+may add these lines to a B<$VAULT/dirvish/default.conf> configuration
+file to call scripts tailored specifically to that vault.  Note that
+the B<pre-client> and B<post-client> scripts must reside on and be
+executable on the I<client>, not the dirvish I<server>.
+
+You may not need to run any scripts at all, in which case the 
+configuration files should not have options for them.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+ FAQ last updated Wednesday, 2005 February 16 by Keith Lofstrom.
+ Original FAQ by jw schultz.
+
+=cut
+

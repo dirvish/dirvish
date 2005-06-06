@@ -1,0 +1,224 @@
+Daily Email Summary of Backups
+
+I have this script run every morning at 9:00 to email me the status of
+the dirvish backups run the previous night. It contains a
+one-line summary of all machines that had errors, followed by du -h
+output, followed by a more detailed summary of each machine.
+An example email follows the script below.
+
+Note: this assumes you use an image-default: %Y%m%d and the backups
+are dated with the previous night's timestamp (using run-alls time
+feature). If your setup is different, you may need to adjust accordingly.
+
+dirvish-status.sh
+------------------------------------------------------------------------------
+#! /bin/sh
+VAULT=/backups
+MAILTO=root
+CONFIG=/etc/dirvish/master.conf
+
+YESTERDAY=`date -d "yesterday" +%Y%m%d`
+
+cd $VAULT || (echo "$0: ERROR: Please set the VAULT variable"; exit 1)
+
+tmpfile=/tmp/dirvish.status.$$
+
+WARNINGS=""
+for machine in `ls|grep -v lost+found`
+do
+  echo "================== $machine =================="
+
+  cd $machine
+
+  # Check for a summary or log file (at least one should be
+  # present if a backup occurred
+  if [ ! -f $YESTERDAY/log -o ! -f $YESTERDAY/summary ]
+  then
+    # If no backup last night, then warn.
+    # Also, try to guess the last night a backup occurred.
+    # (yes, it's crude.)
+    echo "** WARNING: This machine not backed up!"
+    last=`(ls -dt [0-9]* 2>/dev/null)|head -1`
+    if [ "z$last" = "z" ]
+    then
+      last="NEVER"
+    fi
+    echo "             (last backup: $last)"
+    WARNINGS="$WARNINGS $machine"
+  else
+
+    # Otherwise, we assume that if there is no Status: success, 
+    # the backup wasn't successful. It could be that the backup is
+    # still running, but is still worth a look.
+    if [ `grep -c "Status: success" $YESTERDAY/summary` -eq "0" ]
+    then
+      echo "** WARNING: Backup not successful"
+      echo
+      # Keep a list of machines with warnings.
+      WARNINGS="$WARNINGS $machine"
+    fi
+
+    # Copy the backup's summary file to the email, ignoring
+    # any exclude: lines (to keep the email short, but useful.)
+    (grep -v "^ "|grep -v "^exclude:"|grep -v "^$") < $YESTERDAY/summary
+  fi
+  echo
+
+  cd ..
+
+done > $tmpfile
+
+# Include a [**] notation on the subject line if there were warnings. 
+if [ "$WARNINGS" != "" ]
+then
+  WARNSUB="[**] "
+else
+  WARNSUB=""
+fi
+
+(
+if [ "$WARNINGS" != "" ]
+then
+  echo
+  echo "The following machines had warnings:"
+  echo "    $WARNINGS"
+fi
+echo
+echo "Disk usage:"
+/bin/df -h
+echo
+cat $tmpfile
+) | mail -s "${WARNSUB}Dirvish status (${YESTERDAY}@`hostname`)" $MAILTO
+
+rm -f $tmpfile
+------------------------------------------------------------------------------
+
+====================
+Example Email Report
+====================
+
+Note the [] on the subject line. This means that there were errors/warnings.
+The script looks for possible vaults that you've created but not added to
+run-all, so it alerts you that the machine is missing. When you have a lot
+of machines, it's easy to overlook that one wasn't completely setup to be
+backed up.
+
+------------------------------------------------------------------------------
+To: root
+From: root
+Subject: [**] Dirvish status (20040721@backups)
+-------------------------------------------------------
+
+The following machines had warnings:
+     backups monsoon-usr
+
+Disk usage:
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/hda2             3.2G  650M  2.4G  21% /
+/dev/md0              440G  297G  121G  71% /backups
+tmpfs                 315M     0  315M   0% /dev/shm
+
+================== backups ==================
+** WARNING: This machine not backed up!
+             (last backup: 20040205)
+
+================== junior ==================
+client: junior
+tree: /
+rsh: /usr/bin/ssh -1 -i /root/.ssh/backups
+Server: backups
+Bank: /backups
+vault: junior
+branch: default
+Image: 20040721
+Reference: 20040720
+Image-now: 2004-07-21 22:00:00
+Expire: +15 days == 2004-08-05 22:00:00
+SET permissions numeric-ids stats xdev 
+UNSET checksum init sparse whole-file zxfer 
+ACTION: rsync -vrltDH --numeric-ids -x -pgo --stats
+     --exclude-from=/backups/junior/20040721/exclude
+     --link-dest=/backups/junior/20040720/tree
+     junior:/ /backups/junior/20040721/tree
+Backup-begin: 2004-07-21 22:33:46
+Backup-complete: 2004-07-22 00:31:30
+Status: success
+
+================== junior-boot ==================
+client: junior
+tree: /boot
+rsh: /usr/bin/ssh -1 -i /root/.ssh/backups
+Server: backups
+Bank: /backups
+vault: junior-boot
+branch: default
+Image: 20040721
+Reference: 20040720
+Image-now: 2004-07-21 22:00:00
+Expire: +15 days == 2004-08-05 22:00:00
+SET permissions numeric-ids stats xdev 
+UNSET checksum init sparse whole-file zxfer 
+ACTION: rsync -vrltDH --numeric-ids -x -pgo --stats
+     --exclude-from=/backups/junior-boot/20040721/exclude
+     --link-dest=/backups/junior-boot/20040720/tree
+     junior:/boot/ /backups/junior-boot/20040721/tree
+Backup-begin: 2004-07-22 00:34:14
+Backup-complete: 2004-07-22 00:34:15
+Status: success
+
+================== monsoon ==================
+client: monsoon-local
+tree: /
+rsh: /usr/bin/ssh -1 -i /root/.ssh/backups
+Server: backups
+Bank: /backups
+vault: monsoon
+branch: default
+Image: 20040721
+Reference: 20040720
+Image-now: 2004-07-21 22:00:00
+Expire: +15 days == 2004-08-05 22:00:00
+SET permissions numeric-ids stats xdev 
+UNSET checksum init sparse whole-file zxfer 
+ACTION: rsync -vrltDH --numeric-ids -x -pgo --stats
+     --exclude-from=/backups/monsoon/20040721/exclude
+     --link-dest=/backups/monsoon/20040720/tree
+     monsoon-local:/ /backups/monsoon/20040721/tree
+Backup-begin: 2004-07-22 00:34:16
+Backup-complete: 2004-07-22 00:34:38
+Status: success
+
+================== monsoon-usr ==================
+** WARNING: Backup not successful
+
+client: monsoon-local
+tree: /usr
+rsh: /usr/bin/ssh -1 -i /root/.ssh/backups
+Server: backups
+Bank: /backups
+vault: monsoon-usr
+branch: default
+Image: 20040721
+Reference: 20040718
+Image-now: 2004-07-21 20:00:02
+Expire: +15 days == 2004-08-05 20:00:02
+SET permissions numeric-ids stats xdev 
+UNSET checksum init sparse whole-file zxfer 
+ACTION: rsync -vrltDH --numeric-ids -x -pgo --stats
+     --exclude-from=/backups/monsoon-usr/20040721/exclude
+     --link-dest=/backups/monsoon-usr/20040718/tree
+     monsoon-local:/usr/ /backups/monsoon-usr/20040721/tree
+Backup-begin: 2004-07-21 20:00:02
+Backup-complete: 2004-07-21 20:01:05
+Status: error (10) -- error in socket IO
+------------------------------------------------------------------------
+
+History
+
+Jason Cater     08/13/04  Initial Script added.
+James Clendenan 08/18/04 Correction to command interpreter and changed
+                         mail command to mail
+Jason Cater     08/19/04 Move the df command outside of the warning
+                if..then block. 
+
+

@@ -1,0 +1,69 @@
+# RELEASE.pod
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev: 14 $
+# Revision date   : $Date: 2005-02-11 12:06:20 -0800 (Fri, 11 Feb 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/RELEASE.pod $
+
+=head1 DIRVISH RELEASE NOTES
+
+=head2 Dirvish version 1.2.1 released 18 February 2005
+
+=over
+
+=item * Corrected ANOTHER logic inversion bug in B<pre-client> and
+B<post-client> that resulted in the wrong working directory.
+
+=item * Changed rsync code 24 from error to warning.
+
+=item * Changed == to = in the install script.
+
+=item * Allow the use of spaces protected by a backslash in the source
+tree name.
+
+=back
+
+
+=head2 Dirvish version 1.2 released 24 February 2003
+
+=over
+
+=item * Corrected a logic inversion bug in B<pre-client> and
+B<post-client> that resulted in the scripts running on the server. They
+will now run on the client as intended.
+
+=item * License changed to OSL.
+
+=back
+
+=head2 Dirvish version 1.1.2 released 15 July 2003
+
+=head2 Dirvish version 1.1.1 released 26 May 2003
+
+No issues
+
+=head2 Dirvish version 1.1 released 17 May 2003
+
+=over
+
+=item * The master and default config files have been renamed.
+
+ /etc/dirvish/dirvish.conf --> /etc/dirvish/master.conf
+ $VAULT/dirvish/dirvish.conf --> $VAULT/dirvish/default.conf
+
+=item * The B<rsync-options:> option has been replaced with
+B<rsync-option:> which only accepts one option per specification.
+
+=back
+
+=cut
+
+#Pod::HTML2Pod conversion notes:
+#From file RELEASE.html
+# 908 bytes of input
+#Thu Feb 10 20:03:04 2005 keithl
+# No a_name switch not specified, so will not try to render <a name='...'>
+# No a_href switch not specified, so will not try to render <a href='...'>

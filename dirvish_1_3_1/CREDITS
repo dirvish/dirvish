@@ -1,0 +1,73 @@
+Here are some of the contributors to dirvish.  If you contributed some
+code or documentation, and I forgot to add you, please let me know!
+
+Keith Lofstrom   2005 June 6
+-----------------------------------------------------------------------
+N: jw schultz
+E: (deceased)
+D: Original dirvish, through 1.2.0 - Thanks, jw!
+S: Antioch, CA
+S: USA
+
+N: Tomas Abad
+D: dirvish-initall
+S: España
+
+N: Jason Boxman
+E: jasonb AT edseek DOT com
+W: http://edseek.com/~jasonb
+D: Dirvish Setup Guide
+S: Windermere, FL
+S: USA
+
+N: Jason Cater
+D: DailyEmailScript, DirvishTidyScript, SmbMount, WinRsyncD
+S: Memphis, TN
+S: USA
+
+N: James Clendenhan
+D: DailyEmailScript patch
+S: Kingston, ON
+S: Canada
+
+N: Richard Geoffrion
+E: richard-dirv AT richardthecomputerguy DOT com 
+D: RTCG example setup
+S: Garland, TX
+S: USA
+
+N: Keith Lofstrom
+E: keithl AT keithl DOT com
+W: http://www.keithl.com
+D: Website, maintainer, new install
+S: 5290 sw Elm Ave.
+S: Beaverton, Oregon 97005
+S: USA
+
+N: Jacob Lundqvist 
+E: jaclu at hallmus dot se
+D: Hallmus example setup
+S: Halmstad
+S: Sverige
+
+N: Eric Mountain
+E: em-dirvish-1 AT nerim DOT net
+D: new install, main code patches
+S: Sophia Antipolis
+S: France
+
+N: Matt Munnich
+D: DirvishTidyScript patch
+
+N: Steve Ramage
+E: dirvishusersspammedme AT sjrx DOT net
+D: Windows Cliend document
+S: Vancouver, BC
+S: Canada
+
+N: Paul Slootman
+E: paul AT debian DOT org
+D: Debian install, Debian HOWTO
+S: Almelo 
+S: Netherlands
+

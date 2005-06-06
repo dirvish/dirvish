@@ -1,0 +1,222 @@
+# INSTALL.pod
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev: 14 $
+# Revision date   : $Date: 2005-02-11 12:06:20 -0800 (Fri, 11 Feb 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/INSTALL.pod $
+
+# THIS FILE MUST BE CHANGED SIGNIFICANTLY FOR VERSION 1.3
+
+=head1 INSTALLATION and GETTING STARTED
+
+
+=head1 PREREQUISITES
+
+=over
+ linux/unix/bsd/solaris/Mac_OSX on the dirvish server.
+ backup clients that can run rsync and preferably ssh.
+ 
+ rsync version 2.5.6 or higher.
+ rsync version 2.6.0 or higher may be needed if backing up windows.
+
+ perl5 and these perl modules (if you aren't familiar with
+ perl see CPAN(3pm)).
+  	POSIX
+  	Getopt::Long
+  	Time::ParseDate
+    	Time::Period by Patric Ryan
+        Module::Build >= 0.26
+
+Lots of empty disk space.  I recommend using volume management (see lvm(8)).
+
+Ssh configured so root on the backup server can use ssh
+non-interactively to the backup clients.  This does not
+necessarily mean it has to be able to be root on those clients.
+
+=back
+
+=head1 INSTALL
+
+Dirvish is installed with the Build.PL perl script from inside the
+unpack/download directory.  The script makes other scripts that will
+install the various portions of dirvish in default locations.   The
+program is installed with the following three commands:
+
+	./Build.PL <options>
+        ./Build
+	./Build install <options>          (as root!)
+
+You can change the locations where dirvish places the files with
+the following command line options for the first ./Build.PL or
+the third /Build install :
+
+        --install_path conf=/etc/dirvish
+        --install_path share=/usr/share
+        --install_path sharedoc=/usr/share/doc
+        --install_path man5dir=/usr/share/man/man5
+        --install_path man8dir=/usr/share/man/man8
+        --install_path sbin=/usr/sbin
+
+The default locations are shown;  you may change these as you wish.
+Be sure you have write permissions for the installation directories.
+
+You can do a dry run to see where files would be installed with:
+
+        ./Build fakeinstall
+
+You can clean out intermediate files from the install directory with:
+ 
+        ./Build realclean
+
+Module::Build has a number of other useful tricks.  You can learn
+about them by doing a "man Module::Build"
+
+=head1 CONFIGURATION
+
+When dirvish is run, it will read the configuration files to determine
+where to get data (a backup set), then make a backup image copy of that
+data.  Dirvish stores the backup images in "vault" directories.  Plan
+on one vault per backup set.  Vaults can contain hundreds of backup
+images, added by dirvish or dirvish-runall, and removed by dirvish-expire.
+
+While it is possible to back up more than one backup set into a vault,
+using a dirvish feature called a "branch", that is complicated and
+rarely used for typical small networks.
+
+Vault directories are stored in "banks", which are higher level
+directories.  You will create one or more directories as banks
+in which to place the vaults;  You can create a large filesystem for
+each bank if you are not using LVM, and store multiple vaults.  If
+you are using LVM, you may prefer to make a filesystem for each vault.
+
+Inside the banks create one mount-point directory (vault) for
+each backup set (ex: home).  Start by making each filesystem
+about 1.5 times the size of the filesystem or directory tree
+it will be used to back up.  Mount 'em up.  The FAQ has
+additional details about how these filesystems should be built.
+
+
+  The Master Configuration File
+ 	
+Create the file /etc/dirvish/master.conf on your backup server.
+It might look something like this:
+
+ 	bank:
+ 	 	/e/backup1
+ 	 	/e/backup2
+ 	exclude:
+ 	 	lost+found/
+ 	 	*~
+ 	 	.nfs*
+ 	Runall:
+ 	 	jane-app
+ 	 	jane-data
+ 	 	jane-home
+ 	 	jane-site 	22:00
+ 	expire-default: +15 days
+ 	expire-rule:
+ 	#       MIN HR    DOM MON       DOW  STRFTIME_FMT
+ 	 	*   *     *   *         1    +3 months
+ 	 	*   *     1-7 *         1    +1 year
+ 	 	*   *     1-7 1,4,7,10  1
+ 	 	*   10-20 *   *         *    +4 days
+
+This configuration file creates two bank directories, /e/backup1
+and /e/backup2.  It excludes some files and directories from all
+backups, in this case all directories named "lost+found", all 
+files ending in a tilde (~), and all files starting with ".nfs".
+When dirvish-runall is called by cron, it backs up four vaults
+in the order shown.  The backup images will be stored in tree
+directories, such as:
+
+  /e/backup1/jane-app/2005-1125-0426/tree
+
+With the year, date, hour and minute used to construct the name
+of the image, as a timestamp (in this case, November 25, 2005 at
+0426).  If an optional time field is added, then the backup image
+name is set that hour and minute instead, on the previous day if
+necessary to mark the time before the actual start of the backup.
+For example, the last vault as shown above might be stored in a
+directory named:
+
+  /e/backup2/jane-site/2005-1124-2200/tree
+
+The expire-default and expire-rule entries determine when dirvish-expire
+should deletes backups.  If dirvish-expire is not run, these rules are
+never used.  You can put many other configuration options in the 
+master.conf file, and you can also put additional exclude and expire
+rules in the per-vault configuration files described below.  See the
+dirvish.conf(5) man page for more information.
+
+
+   Per-vault configuration:
+
+Each vault must contain a dirvish subdirectory, containing a
+default.conf configuration file.
+
+Here is an example of a configuration file for a vault named
+jane-home, in /e/backup1/jane-home/dirvish/default.conf:
+
+ 	client: jane
+ 	tree: /home
+        xdev: 1
+ 	exclude:
+ 	        /**/.*/**/*cache/
+ 	 	/**/.*/*cache/
+ 	 	/**/.*/**/*Cache/
+                /fred
+ 	 	.kde/share/thumbnails/
+
+This contains additional excluded files and directories, which
+add onto those described in master.conf.  The default.conf file
+also tells dirvish which client machine to back up, what directory
+or filesystem on that machine, and (in this case) not to cross
+filesystem boundaries during backup.  If the excludes begin with
+a /, as shown, they are relative to the start of the backup tree.
+
+If you wish, you can exclude a directory, say /home/fred as shown
+above, then back it up into another vault, with tree: /home/fred .
+
+   Dirvish initialization and daily operation:
+
+Now that you are configured create an initial image by running
+dirvish on the backup server like so:
+
+ 	root# dirvish --vault home --init
+
+If you add the --no-run option you will see what it will try
+to do, without actually moving any data.
+
+To do a regular backup you now only would need to execute
+"dirvish --vault home"
+
+After you create your image you can look at the log and summary
+files to see what was done.
+
+I strongly recommend reading the dirvish and dirvish.conf manpages.
+
+Work on your exclude lists and have fun.
+
+dirvish.runall will run dirvish on all of the vault[:branch]s
+listed in the Runall list in /etc/dirvish.conf .
+
+Because dirvish handles calculating expiration dates
+automatically you need only add two entries to crontab to
+completely automate your dirvish backups.
+
+ 	10 03 * * *     root /site/sbin/dirvish-expire --quiet
+ 	18 03 * * *     root /site/sbin/dirvish-runall --quiet
+
+Note that both dirvish-runall and dirvish-expire are scheduled
+after 22:00 as specified in the Runall: parameter.
+
+You can run dirvish more than once a day.  However, divish will
+refuse to make more than one image with the same name, so you 
+should not use the optional hour:minute parameter for the vault
+in the runall list, and instead let dirvish mark the image with
+the actual time. 
+
+=cut

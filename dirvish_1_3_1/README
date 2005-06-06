@@ -1,0 +1,46 @@
+# README for Dirvish-1.3khl branch directory
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev: 14 $
+# Revision date   : $Date: 2005-02-11 12:06:20 -0800 (Fri, 11 Feb 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/README $
+
+V0.04 Keith Lofstrom  2005-Jun-06
+V0.03 Keith Lofstrom  2005-Apr-10
+V0.02 Keith Lofstrom  2005-Feb-11
+V0.01 Keith Lofstrom  2005-Feb-10
+
+Version 1.3.1 is experimental.  It may eat your babies.  I've got it running
+on a redundant backup server, though my main backup server is still running
+version 1.2.1 .
+
+Before you can do anything else, you will need Module::Build for
+Perl.  You can get it with:
+
+perl -MCPAN -e shell      # if you haven't run CPAN before, expect lots of questions
+ cpan>  install Module::Build    
+ cpan>  install POSIX                   # may already be installed
+ cpan>  install Getopt::Long            # may already be installed
+ cpan>  install Time::ParseDate
+ cpan>  install Time::Period
+
+Then you can start the bu
+
+
+
+Notes:  ----
+
+I have refactored all the subroutines into dirvishlib.pl .  We may
+want to make a package out of this instead.   I added a few subs
+to get rid of the anonymous subs in options, and a routine that
+incorporates the common code for loading the master.conf file, and
+another routine that initializes the %$Options hash.   I am not yet
+initializing *everything* in the hash, but I think that might be a
+good move, depending on what we learn while building test harnesses.
+
+I combined the imsort subroutines from both dirvish-expire and
+dirvish-locate.  This may not be kosher.
+

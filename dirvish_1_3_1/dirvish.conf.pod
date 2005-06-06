@@ -1,0 +1,667 @@
+# dirvish.conf.pod
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev: 14 $
+# Revision date   : $Date: 2005-02-11 12:06:20 -0800 (Fri, 11 Feb 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/dirvish.conf.pod $
+
+=head1 NAME
+
+dirvish.conf - dirvish configuration file.
+
+=head1 DESCRIPTION
+
+The dirvish.conf file provides configuration information and default
+values for dirvish.
+
+The file format is fairly simple. Each option requires either a
+single-value or a list of values and unless otherwise indicated must be
+specified according to its expected type. Single value options are
+specified by lines of the form B<option: value>. Options expecting list
+must be specified in a multi-line format as shown here where the lines
+specifying values are indented by any kind of whitespace even if only
+one value is being specified.
+
+ option:
+ 
+      value1
+      value2
+      .
+      .
+      .
+      valueN
+
+Each value must be provided on its own line. Any leading and trailing
+whitespace is discarded. Options whose names with an initial capital
+(ex: Foo) are discarded by dirvish itself but may be used by support
+utilities. Blank lines are ignored.
+
+While this simplistic format may allow for configuration errors it
+allows arbitrary options to be declared that custom support scripts
+could use.
+
+A B<#> introduces a comment to the end of the line.
+
+On startup the dirvish utilities will first load a master dirvish.conf
+file. B</etc/dirvish.conf> will be tried first but if not present
+B</etc/dirvish/master.conf> will be tried.
+
+During installation dirvish may have been configured expect the
+system-wide configuration files in some location other than
+/etc/dirvish.
+
+Multiple configuration files will be loaded by the B<--vault> and
+B<--branch> command-line options as well as the B<config:> and
+B<client:> configuration parameters. To prevent looping each
+configuration file can only be loaded once.
+
+=head1 DIRVISH OPTIONS
+
+Like the command line each option may be specified any number of times.
+Those options that expect lists will accumulate all of their arguments
+and single for single value options each specification will override
+the ones before.
+
+Boolean values need to specified as B<1> or B<0> or may be specified
+using B<SET> or B<UNSET>. Some Boolean values are set by default and
+must be explicitly unset if unwanted.
+
+Each option is marked here with one of (B) for Boolean, (S) single
+value, (L) list or (0) other.
+
+B<SET> I<option option ...> (O)
+
+B<UNSET> I<option option ...> (O)
+
+Set or unset one or more boolean options.
+
+NOTE: The SET and UNSET directives do not use colons E<lt>:E<gt>.
+
+B<RESET> I<option> (O)
+
+Reset a list option so that it contains no values.
+
+This may be used to start specification of the option.
+
+NOTE: The RESET directive does not use a colon E<lt>:E<gt>.
+
+B<bank:> (L)
+
+Specify paths to directories containing vaults.
+
+A I<bank> is a directory containing one or more I<vault>s. The system
+supports multiple I<bank>s so that filesystem mount-points can be
+managed more effectively.
+
+When a I<vault> is specified the I<bank>s will be searched in list
+order until the I<vault> is found. This way I<vault>s can be moved
+between I<bank>s or added without having to update a master index.
+
+Multiple B<bank:> values will accumulate.
+
+B<branch:> I<branch_name> (S)
+
+Specify a I<branch> to use.
+
+A I<branch> is a sequence of I<image>s.
+
+This also specifies a default value for B<reference:>.
+
+Setting this in a config file may cause the command line option to be
+overridden. Use B<branch-default:> instead.
+
+B<branch-default:> I<branch_name> (S)
+
+Specify a default I<branch> to use.
+
+B<client:> [I<username@>]I<client_name> (S)
+
+specify a client to back up.
+
+Setting this to the same value as hostname will cause dirvish to do a
+local copy and stay off the network. This automatically invokes
+B<whole-file>.
+
+The first time this parameter is set B</etc/dirvish/>I<client_name> or
+B</etc/dirvish/>I<client_name>B<.conf> will be loaded.
+
+B<checksum:> (B)
+
+Force the checksum comparison of file contents even when the inode
+fails to indicate a change has occurred.
+
+Default value: B<0>
+
+B<config:> I<filename> (S)
+
+Load configuration file.
+
+Similar to #include, I<filename> or I<filename>B<.conf> will be loaded
+immediately.
+
+If I<filename> is a relative path it will be looked for in the vault
+and then the system-wide configuration directories.
+
+B<exclude:> (L)
+
+Specify a filename patterns to exclude.
+
+Patterns are based on shell glob with some enhancements.
+
+See B<rsync(1)> for more details.
+
+Multiple B<exclude:> values will accumulate.
+
+B<file-exclude:> I<filename> (S)
+
+Load a set of patterns from a file.
+
+If I<filename> is a relative path it will be looked for in the vault
+and then the system-wide configuration directories.
+
+B<expire:> I<expire_date> (S)
+
+Specify a time for the I<image> to expire.
+
+This does not actually expire anything. What it does do is add an
+B<Expire:> option to the I<image> summary file with the absolute time
+appended so that B<dirvish-expire> can automate old I<image> removal.
+
+Setting this in a config file may cause the command line option to be
+overridden. Use B<expire-rule:> and B<expire-default:> instead.
+
+See B<Time::ParseDate(3pm)> for more details.
+
+B<expire-default:> I<expire_date> (S)
+
+Specify a default expiration time.
+
+This value will only be used if expire is not set and expire-rule
+doesn't have a match.
+
+B<expire-rule:> (L)
+
+specify rules for expiration.
+
+Rules are specified similar to crontab or in B<Time::Period>formatB<.>
+
+See B<EXPIRE RULES> for more details.
+
+Multiple B<expire-rule:> values will accumulate.
+
+B<image:> I<image_name> (S)
+
+Specify a name for the I<image>.
+
+I<image_name> is passed through B<POSIX::strftime>
+
+Setting this in a config file may cause the command line option to be
+overridden. Use B<image-default:> instead.
+
+See B<strftime(3)> for more details.
+
+B<image-default:> I<image_name> (S)
+
+Set the default I<image_name>.
+
+This value will only be used if B<image:> is not set.
+
+B<image-perm:> I<octal_mode> (S)
+
+Set the permissions for the I<image>.
+
+While the I<image> is being created the I<image> directory permissions
+will be B<0700>. After completion it will be changed to I<octal_mode>
+or B<0755>.
+
+See B<chmod(1) and umask(2)> for more details.
+
+B<image-time:> I<parsedate_expression> (S)
+
+Time to use when creating the I<image> name.
+
+If an absolute time without a date is provided it will be forced into
+the past.
+
+If this isn't set the current time will be used.
+
+See B<Time::ParseDate(3pm)> for more details.
+
+B<image-temp:> I<dirname> (S)
+
+Temporary directory name to use for new I<image>. This allows you to
+have I<image>s created with the same directory name each run so that
+automatic processes can access them.
+
+The next time an image is made on the I<branch> this option will cause
+the directory to be renamed to its official name.
+
+B<index:> I<none>|I<text>|I<gzip>|I<bzip2> (S)
+
+Create an index file listing all files in the I<image>.
+
+The index file will be created using B<find -ls> so the list will be in
+the same format as B<ls -dils> with paths converted to reflect the
+source location.
+
+If index is set to bzip2 or gzip or a path to one the index file will
+be compressed accordingly.
+
+This index will be used by B<dirvish-locate> to locate versions of
+files. See B<dirvish-locate(8)> for more details.
+
+B<init:> (B)
+
+Create an initial I<image>.
+
+Turning this on will prevent backups from being incremental.
+
+B<log:> I<text>|I<gzip>|I<bzip2> (S)
+
+Specify format for the image log file.
+
+If B<log> is set to bzip2 or gzip or a path to one the log file will be
+compressed accordingly.
+
+Default value: B<0>
+
+B<meta-perm:> I<octal-mode> (S)
+
+Set the permissions for the I<image> meta-data files.
+
+If this value is set the permissions of the meta-data files in the
+I<image> will be changed after the I<image> is created. Otherwise the
+active umask will prevail.
+
+SECURITY NOTE: The log, index, and error files contain lists of files.
+It may be possible that filenames themselves may be or contain
+confidential information so uncontrolled access may constitute a
+security weakness.
+
+See B<chmod(1) and umask(2)> for more details.
+
+B<numeric-ids:> (B)
+
+Use numeric uid/gid values instead of looking up user/group names for
+setting permissions.
+
+See B<rsync(1)> for more details.
+
+Default value: B<1>
+
+B<password-file:> I<filepath> (S)
+
+Specify file containing password for connection to an B<rsync> daemon
+on backup client.
+
+This is not useful for remote shell passwords.
+
+See B<--password-file> in B<rsync(1)> for more details.
+
+B<permissions:> (B)
+
+Preserve file permissions. If this is unset permissions will not be
+checked or preserved.
+
+With rsync version 2.5.6 not preserving permissions will break the
+linking. Only unset this if you are running a later version of rsync.
+
+See B<rsync(1)> for more details.
+
+Default value: B<1>
+
+B<pre-server:> I<shell_command> (S)
+
+B<pre-client:> I<shell_command> (S)
+
+B<post-client:> I<shell_command> (S)
+
+B<post-server:> I<shell_command> (S)
+
+Execute I<shell_command> on client or server before or after making
+backup.
+
+The client commands are run on the client system using the remote shell
+command (see the B<rsh>: parameter).
+
+The order of execution is B<pre-server>, B<pre-client>, B<rsync>,
+B<post-client>, B<post-server>. The I<shell_command> will be passed
+through B<strftime(3)> to allow date strings to be expanded.
+
+Each pre or post I<shell_command>s will be run with these environment
+variables B<DIRVISH_SERVER>, B<DIRVISH_CLIENT, DIRVISH_SRC>,
+B<DIRVISH_DEST> and B<DIRVISH_IMAGE> set. The current directory will be
+B<DIRVISH_SRC> on the client and B<DIRVISH_DEST> on the server. If
+there are any exclude patterns defined the B<pre-server> shell command
+will also have the exclude file's path in B<DIRVISH_EXCLUDE> so it may
+read or modify the exclude list.
+
+STDOUT from each I<shell_command> will be written to the I<image> log
+file.
+
+The exit status of each script will be checked. Non-zero values will be
+recognized as failure and logged.  Failure of the B<pre-server> command
+will halt all further action. Failure of the B<pre-client> command will
+prevent the rsync from running and the B<post-server> command, if any,
+will be run.
+
+Post I<shell_command>s will also have B<DIRVISH_STATUS> set to
+B<success>, B<warning>, B<error>, or B<fatal error>.
+
+This is useful for multiple things. The client I<shell_command>s can be
+used to stop and start services so their files can be backed up safely.
+You might use B<post-server:> to schedule replication or a tape backup
+of the new I<image>. Use your imagination.
+
+B<reference:> I<branch_name>|I<image_name> (S)
+
+Specify an existing I<image> or a I<branch> from which to create the
+new I<image>.
+
+If a I<branch_name> is specified, the last existing I<image> from its
+history file will be used. A I<branch> will take precedence over an
+I<image> of the same name.
+
+If this isn't specified the I<branch> name will be used as a default
+value.
+
+B<rsh:> I<command> (S)
+
+Remote shell utility.
+
+This can be used to specify the location of B<ssh> or B<rsh> and/or to
+provide addition options for said utility such as B<-p> I<port> for
+B<ssh> to use an alternate port number.
+
+If not specified B<ssh> will be used.
+
+This remote shell command will be used not only as the default rsync
+transport but also for any B<pre-client> and B<post-client> commands.
+
+B<rsync:> I<command> (S)
+
+Path to rsync executable on the server.
+
+B<rsync-client:> I<command> (S)
+
+Path to rsync executable on the client.
+
+B<rsync-option:> (L)
+
+Specify additional options for the rsync command.
+
+Only one option per list item is supported.
+
+This allows you to use rsync features that are not directly supported
+by B<dirvish>. Where B<dirvish> does support an rsync feature it is
+probably better to use the the B<dirvish> supplied mechanism for
+setting it.
+
+Multiple B<rsync-options:> values will accumulate.
+
+B<sparse:> (B)
+
+Try to handle sparse files efficiently so they take up less space in
+the I<vault>.
+
+NOTE: Some filesystem types may have problems seeking over null
+regions.
+
+Default value: B<0>
+
+B<speed-limit:> I<Mbps> (S)
+
+Specify a maximum transfer rate.
+
+This allows you to limit the network bandwidth consumed. The value is
+specified in approximate Mega-bits per second which correlates to
+network transport specifications. An adaptive algorithm is used so the
+actual bandwidth usage may exceed I<Mbps> occasionally.
+
+See B<--bwlimit> in B<rsync(1)> for more details.
+
+B<stats:> (B)
+
+Have rsync report transfer statistics.
+
+See B<rsync(1)> for more details.
+
+Default value: B<1>
+
+B<summary:> I<short>|I<long> (S)
+
+Specify summary format.
+
+A short summary will only include final used values. A long summary
+will include all configuration values.
+
+With long format you custom options in the configuration files will
+appear in the summary.
+
+The default is short.
+
+B<tree:> I<path [alias]> (S)
+
+Specify a directory path on the client to backup.
+
+If I<path> is prefixed with a colon the transfer will be done from an
+B<rsync> daemon on the client otherwise the transfer will be done
+through a remote shell process.
+
+The optional I<alias> specifies the path that should appear in the
+index so B<dirvish-locate> will report paths consistent with common
+usage. This can help reduce confusion when dealing with users
+unfamiliar with the physical topology of their network provided files.
+
+B<no-run:> (B)
+
+Don't actually do anything.
+
+Process all configuration files, options and tests then produce a
+summary/configuration file on standard output and exit.
+
+I can't think why you would do this in a configuration file but if you
+want to shoot yourself in the foot, be my guest.
+
+Default value: B<0>
+
+B<vault:> I<vault> (S)
+
+Specify the I<vault> to store the I<image> in.
+
+Although multiple I<vault>s may share a filesystem a given I<vault>
+cannot span filesystems. For filesystem purposes the I<vault> is the
+level of atomicity.
+
+This will seldom be specified in a configuration file.
+
+B<whole-file:> (B)
+
+Transfer whole files instead of just the parts that have changed.
+
+This may be slightly faster for files that have more changed than left
+the same such as compressed or encrypted files. In most cases this will
+be slower when transferring over the network but will use less CPU
+resources. This will be faster if the transfers are not over the
+network or when the network is faster than the destination disk
+subsystem.
+
+Default value: B<0>
+
+
+B<xdev:> (B)
+
+Do not cross mount-points when traversing the tree on the client.
+
+Default value: B<0>
+
+
+B<zxfer:> (B)
+
+Enable compression on data-transfer.
+
+Default value: B<0>
+
+
+=head1 SCHEDULING OPTIONS
+
+B<Dirvish:> I<path> (S)
+
+Location of dirvish executable.
+
+If not set defaults to B<dirvish>.
+
+B<Runall:> (L)
+
+Specify I<branch>es to be scheduled for automated backups. Each value
+is specified in the form
+
+vault:branch [image_time]
+
+If image_time is set here it will be used.
+
+This option can only be set in the master configuration file and
+multiple values will accumulate.
+
+=head1 EXPIRE RULES
+
+Expire rules is a list of rules used to determine an expiration time
+for an I<image>.
+
+The last rule that matches will apply so list order is significant.
+This allows rules to be set in client, I<vault> and I<branch>
+configuration files to override rules set in the master configuration
+file without having to use B<RESET>. In most cases it is better to use
+a B<expire-default:> value than to define a rule that matches all
+possible times.
+
+Each rule has an pattern expression against which the current time is
+compared followed by a date specifier in B<Time::ParseDate> format. See
+B<Time::ParseDate(3pm)> for more details.
+
+A matching rule with an empty/missing date specifier or specifying
+B<never> will result in no expiration.
+
+The time pattern expression may be in either B<crontab> or in
+B<Time::Period> format. See B<crontab(5) and Time::Period(3pm)> for
+more details.
+
+The crontab formated patterns are converted to B<Time::Period> format
+so the limitations and extensions for the specification of option
+values of B<Time::Period> apply to the B<crontab> format as well. Most
+notable is that the days of the week are numbered B<1>-B<7> for
+B<sun>-B<sat> so B<0> is not a valid wday but B<sat> is.
+
+Here are two equivalent examples of an expire_rules list.
+
+      expire_default: +5 weeks
+      expire_rules:
+ 
+      #MIN  HR    DOM   MON         DOW   EXPIRE
+      *     *     *     *           1     +3 months
+      *     *     1-7   *           su    +1 year
+      *     *     1-7   1,4,7,10    1     never
+      *     10-20 *     *           *     +10 days
+ or:
+ 
+      wd { sun }                          +3 months
+      wd { sun } md { 1-7 }               +1 year
+      wd { 1 } md { 1-7 } mo { 1,4,7,10 } never
+      hr { 10-20 }                        +10 days
+
+This describes is an aggressive retention schedule. If the nightly
+backup is made dated the 1st Sunday of each quarter it is is kept
+forever, the 1st Sunday of any other month is kept for 1 year, all
+other Sunday's are kept for 3 months, the remaining nightlies are kept
+for 5 weeks. In addition, if the backup is made between 10AM and 8PM it
+will expire after 10 days. This would be appropriate for someone with a
+huge backup server who is so paranoid he makes two backups per day. The
+other possibility for the hour spec would be for ad-hoc special backups
+to have a default that differs from the normal dailies.
+
+It should be noted that all expiration rules will do is to cause
+dirvish to put an B<Expire:> option in the summary file. The
+B<dirvish-expire> utility will have to be run to actually delete any
+expired I<image>s.
+
+=head1 FILES
+
+B</etc/dirvish/master.conf>
+
+alternate master configuration file.
+
+B</etc/dirvish.conf>
+
+master configuration file.
+
+B</etc/dirvish/>I<client>B<[.conf]>
+
+client configuration file.
+
+I<bank/vault/>B<dirvish/default[.conf]>
+
+default vault configuration file.
+
+I<bank/vault/>B<dirvish>I</branch>B<[.conf]>
+
+branch configuration file.
+
+I<bank/vault/>B<dirvish>I</branch>B<.hist>
+
+branch history file.
+
+I<bank/vault/image/>B<summary>
+
+image creation summary.
+
+I<bank/vault/image/>B<log>
+
+image creation log.
+
+I<bank/vault/image/>B<tree>
+
+actual image of source directory tree.
+
+I<bank/vault/image/>B<rsync_error>
+
+Error output from rsync if errors or warnings were detected.
+
+=head1 SEE ALSO
+
+ dirvish(8)
+ dirvish-expire(8)
+ dirvish-runall(8)
+ dirvish-locate(8)
+ ssh(1),
+ rsync(1)
+ Time::ParseDate(3pm)
+ strftime(3)
+
+=head1 AUTHOR
+
+Dirvish was created by J.W. Schultz of Pegasystems Technologies.
+
+Dirvish is now maintained by Keith Lofstrom at www.dirvish.org , with
+the able assistance of many others.
+
+=head1 BUGS
+
+Rsync version 2.5.6 has a bug so that unsetting the B<perms> option
+will not disable testing for permissions. Disabling perms will break
+image linking.
+
+Options set in configuration files will override command line options
+that have been set before the file is read. This behavior while
+consistent may confuse users. For this reason the more frequently used
+command line options have options paired with a I<default> option so
+the order of specification will be more forgiving. It is recommended
+that where such default options exist in configuration files they
+should be preferred over the primary option.
+
+It is possible to specify almost any command line option as a option.
+Some of them just don't make sense to use here.
+
+=cut

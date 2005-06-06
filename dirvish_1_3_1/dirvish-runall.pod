@@ -1,0 +1,114 @@
+# dirvish-runall.pod
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev: 14 $
+# Revision date   : $Date: 2005-02-11 12:06:20 -0800 (Fri, 11 Feb 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/dirvish-runall.pod $
+
+=head1 NAME
+
+dirvish-runall - run a set of dirvish backup jobs.
+
+=head1 SYNOPSIS
+
+B<dirvish-runall>I<[OPTIONS]>
+
+=head1 DESCRIPTION
+
+Run all the jobs specified in the B<Runall> field of the dirvish master
+configuration file.
+
+=head1 OPTIONS
+
+Each option may be unambiguously abbreviated.
+
+B<--config> I<configfile>
+
+Read I<configfile> for the B<Runall:> field. By default
+B<dirvish-runall> will use the B<Runall:> field from the master
+configuration file.
+
+This will only be used by B<dirvish-runall> itself and not be
+propagated to the B<dirvish> processes.
+
+See B<dirvish.conf(5)> for more details.
+
+B<--no-run>
+
+B<--dry-run>
+
+Don't actually do anything. Just display what would have happened.
+
+B<--quiet>
+
+Run quietly, only report errors.
+
+Normally B<dirvish-runall> will report the dirvish commands invoked
+with timestamps.
+
+B<--version>
+
+Print the version information and exit.
+
+=head1 EXIT CODES
+
+To facilitate further automation and integration of B<dirvish-runall>
+with other tools B<dirvish-runall> provides rationalised exit codes.
+The exit codes are range based. While the code for a specific error may
+change from one version to another it will remain within the specified
+range. So don't test for specific exit codes but instead test for a
+range of values. To the degree possible higher value ranges indicate
+more severe errors.
+
+=over 10
+
+=item B<0>
+
+success
+
+=item B<1-199>
+
+Number of B<dirvish> jobs that failed. If more than 199 jobs failed 199
+will be the exit code.
+
+=item B<200-219>
+
+An error was encountered in loading a configuration file.
+
+=item B<220-254>
+
+An error was detected in the configuration.
+
+=item B<255>
+
+Incorrect usage.
+
+=back
+
+=head1 FILES
+
+B</etc/dirvish/master.conf>
+
+alternate master configuration file.
+
+B</etc/dirvish.conf>
+
+master configuration file.
+
+=head1 SEE ALSO
+
+ dirvish.conf(5)
+
+=head1 AUTHOR
+
+Dirvish was created by J.W. Schultz of Pegasystems Technologies.
+
+Dirvish is now maintained by Keith Lofstrom at www.dirvish.org , with
+the able assistance of many others.
+
+=head1 BUGS
+
+=cut

@@ -1,0 +1,600 @@
+#!/bin/bash
+#
+#
+# ALIRA (Advance Linux Research Area)
+# Copyright (c) May 2005, Servitic
+#
+# Node Name:     tweedle.servitic.net
+# Service Name:  dirvish v1.2.1
+# File Name:     /usr/sbin/dirvish-initall
+# Symbolic Link:
+# OS Name:       SuSE Linux Professional v9.2
+#
+# Author(s):     Tomás Abad <tomas.abad@servitic.net>
+#
+#
+
+#
+#
+# Purpose:
+#     Initialize dirvish vaults.
+#
+#
+
+
+#
+# Function _getbanks()
+#
+function _getbanks {
+    declare line=""
+    declare banks=""
+    declare bank=false
+
+    #
+    # Read lines from configuration file
+    #
+    while read line; do
+        #
+        # Detect end of search
+        #
+        if ([ -z "${line}" ] || [ -n "$(echo ${line} | grep :)" ]) &&
+           [ ${bank} = true ]; then
+            break;
+        fi
+
+        #
+        # Proccess option and value lines only 
+        #
+        if [ -n "${line}" ] && [ -z "$(echo ${line} | grep ^#)" ]; then
+            #
+            # Check for 'bank' option
+            # 
+            if [ "${line}" = bank: ]; then
+                bank=true
+                continue
+            fi
+
+            #
+            # Proccess bank values
+            #
+            if [ ${bank} = true ] && [ -d ${line} ]; then
+                if [ -z "${banks}" ]; then
+                    banks=${line}
+                else
+                    banks="${banks} ${line}"
+                fi
+            fi
+        fi
+    done < ${masterconf}
+
+    #
+    # Return banks
+    #
+    echo "${banks}"
+}    # _getbanks()
+
+
+#
+# Function _getopts()
+#
+function _getopts {
+    declare rcode=0
+    declare option=""
+
+    while getopts ":c:hlqt:v:V" option; do
+        case ${option} in
+            c  ) # Master configuration file
+                if [ ${cset} = true ] ||
+                   [ ${hset} = true ] || 
+                   [ ${Vset} = true ] ||
+                   [ -z "${OPTARG}" ]; then
+                    rcode=1
+                    break
+                fi
+ 
+                cset=true
+                masterconf=${OPTARG}
+                ;;
+
+            h  ) # Help
+                if [ ${cset} = true ] ||
+                   [ ${hset} = true ] ||
+                   [ ${lset} = true ] ||
+                   [ ${qset} = true ] ||
+                   [ ${tset} = true ] ||
+                   [ ${vset} = true ] ||
+                   [ ${Vset} = true ]; then
+                    rcode=1
+                    break
+                fi
+
+                hset=true
+                ;;
+
+            l  ) # List vaults and branchs
+                if [ ${hset} = true ] ||
+                   [ ${lset} = true ] ||
+                   [ ${qset} = true ] ||
+                   [ ${tset} = true ] ||
+                   [ ${vset} = true ] ||
+                   [ ${Vset} = true ]; then
+                    rcode=1
+                    break
+                fi
+
+                lset=true
+                ;;
+
+            q  ) # Quiet mode
+                if [ ${hset} = true ] ||
+                   [ ${lset} = true ] ||
+                   [ ${qset} = true ] ||
+                   [ ${Vset} = true ]; then
+                    rcode=1
+                    break
+                fi
+
+                qset=true
+                ;;
+
+            t  ) # Images timestamp
+                if [ ${hset} = true ] ||
+                   [ ${lset} = true ] ||
+                   [ ${tset} = true ] ||
+                   [ ${Vset} = true ] ||
+                   [ -z "${OPTARG}" ]; then
+                    rcode=1
+                    break
+                fi
+
+                if [ -n "${OPTARG#[0-2][0-9][0-5][0-9]}" ]; then
+                    rcode=1
+                    break
+                fi
+
+                tset=true
+                imagetime=${OPTARG}
+                ;;
+
+            v  ) # Selected vaults only
+                if [ ${hset} = true ] ||
+                   [ ${lset} = true ] ||
+                   [ ${Vset} = true ] ||
+                   [ -z "${OPTARG}" ]; then
+                    rcode=1
+                    break
+                fi
+
+                vset=true
+                selectedvaults[${#selectedvaults[@]}]=${OPTARG}
+                ;;
+
+            V  ) # Version
+                if [ ${cset} = true ] ||
+                   [ ${hset} = true ] ||
+                   [ ${lset} = true ] ||
+                   [ ${qset} = true ] ||
+                   [ ${tset} = true ] ||
+                   [ ${vset} = true ] ||
+                   [ ${Vset} = true ]; then
+                    rcode=1
+                    break
+                fi
+
+                Vset=true
+                ;;
+
+            \: ) # Required option not found
+                 rcode=2
+                 break
+                 ;;
+
+            \? ) # Unknow option
+                 rcode=3
+                 break
+                 ;;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+
+    #
+    # Return rcode
+    #
+    return ${rcode}
+}    # _getopts()
+
+
+#
+# Function _getvaults()
+#
+function _getvaults {
+    declare bank=""
+    declare vault=""
+    declare banks=""
+    declare vaults=""
+    declare findonly=""
+
+    #
+    # Get banks
+    #
+    banks=$(_getbanks)
+
+    #
+    # Check banks
+    #
+    if [ -n "${banks}" ]; then
+        #
+        # Get find only
+        #
+        for vault in "${selectedvaults[@]}"; do
+            if [ -z "${findonly}" ]; then
+                findonly="-name ${vault}"
+            else
+                findonly="${findonly} -o -name ${vault}"
+            fi
+        done
+
+        #
+        # Proccess each bank
+        #
+        for bank in ${banks}; do
+            #
+            # Find vaults in bank
+            #
+            vault=$(find ${bank%/}/* -type d -maxdepth 0 ${findonly} -not -name dirvish)
+
+            #
+            # Proccess vault values
+            #
+            if [ -z "${vaults}" ]; then
+                vaults=${vault}
+            else
+                vaults="${vaults} ${vault}"
+            fi
+        done
+    fi
+
+    #
+    # Return vaults
+    #
+    echo ${vaults}
+}    # _getvaults()
+
+
+#
+# Function _getvaultsconf()
+#
+function _getvaultsconf {
+    declare vault=""
+    declare vaults=""
+    declare vaultconfs=""
+    declare vaultsconfs=""
+
+    #
+    # Get vaults
+    #
+    vaults=$(_getvaults)
+
+    #
+    # Proccess each vault
+    #
+    for vault in ${vaults}; do
+        #
+        # Discard previous initalized vaults
+        #
+        if [ ${lset} = false ] && (( $(find ${vault%/}/* -type d -maxdepth 0 -not -name dirvish 2> /dev/null | wc -l) > 0 )); then
+            continue
+        fi
+
+        #
+        # Find vault configuration files
+        #
+        vaultconfs=$(ls ${vault}/dirvish/*.conf 2> /dev/null)
+
+        if [ -z "${vaultconfs}" ]; then
+            continue
+        fi
+
+        #
+        # Proccess vault configuration files
+        #
+        if [ -z "${vaultsconfs}" ]; then
+            vaultsconfs=${vaultconfs}
+        else
+            vaultsconfs="${vaultsconfs} ${vaultconfs}"
+        fi
+    done
+
+    #
+    # Return configuration files
+    #
+    echo "${vaultsconfs}"
+}    # _getvaultsconf()
+
+
+#
+# Function _help()
+#
+function _help {
+    cat <<!
+  ${basename} initialize all vaults and branchs defined in the master configuration file, do not initialized previously.
+
+  In addition to that, ${basename} allow to initialize only that vaults you want and list all vaults and branch defined in the master configuration file.
+
+usage:
+  ${basename} -h
+  ${basename} -V
+  ${basename} [-c config-file] -l
+  ${basename} [-c config-file] [-q] [-t HHMM] [-v vault [...]]
+
+
+examples:
+  ${basename} -c /etc/dirvish/master.conf -t 0300
+  ${basename} -t 0300 -v mon-boot -v mon-usr -v mon-home
+  ${basename} -q -t 0300
+  ${basename} -l
+
+options:
+  -c     Master configuration file. If this is not set, ${basename} will
+         try to use '/etc/dirvish.con' and '/etc/dirvish/master.con' in
+         that order.
+  -h     Print this help.
+  -l     List vaults and branchs.
+  -q     Quiet mode.
+  -t     Time used in vault:branch initialization..
+  -v     Vault name. You can set more than one vault name.
+  -V     Print ${basename} version.
+
+!
+}    # _help()
+
+
+#
+# Function _initvault()
+#
+function _initvault {
+    declare branch=$2
+    declare command=""
+    declare -r vault=$1
+    declare timestamp=""
+
+    #
+    # Check params
+    #
+    if [ -z "${vault}" ]; then
+        return 1
+    fi
+
+    branch=:${branch:-default}
+
+    #
+    # Check for image-time
+    #
+    timestamp=${imagetime:+--image-time ${imagetime}}
+
+    #
+    # Construct command
+    #
+    command="dirvish --init --vault ${vault}${branch} ${timestamp}"
+    #
+    # Proccess vault initialization
+    #
+    _print "${command}"
+    eval "${command}"
+}    #    _initvault()
+
+
+#
+# Function _initvaults()
+#
+function _initvaults {
+    declare vault=""
+    declare branch=""
+    declare imagepath=""
+    declare vaultconf=""
+    declare vaultsconfs=""
+
+    #
+    # Get vaults configuration files
+    #
+    vaultsconfs=$(_getvaultsconf)
+
+    #
+    # Mark start process
+    #
+    _print '================== Start Process ==================' 
+
+    #
+    # Proccess each vault configuration file
+    #
+    for vaultconf in ${vaultsconfs}; do
+        #
+        # Get image path
+        #
+        imagepath=${vaultconf%/dirvish/*.conf}
+
+        #
+        # Get vault
+        #
+        vault=${imagepath##*/}
+
+        #
+        # Get branch
+        #
+        branch=${vaultconf##*/}
+        branch=${branch%*.conf}
+
+        #
+        # Init vault
+        #
+        _initvault ${vault} ${branch}
+    done
+
+    #
+    # Mark end process
+    #
+    _print '==================  End Process  =================='
+}    # _initvaults()
+
+
+#
+# Function _listvaults()
+#
+function _listvaults {
+    declare bank=""
+    declare vault=""
+    declare branch=""
+    declare imagepath=""
+    declare vaultconf=""
+    declare vaultsconfs=""
+
+    #
+    # Get vaults configuration files
+    #
+    vaultsconfs=$(_getvaultsconf)
+
+    #
+    # Proccess each vault configuration file
+    #
+    for vaultconf in ${vaultsconfs}; do
+        #
+        # Get image path
+        #
+        imagepath=${vaultconf%/dirvish/*.conf}
+
+        #
+        # Get bank
+        #
+        bank=${imagepath%/*}
+
+        #
+        # Get vault
+        #
+        vault=${imagepath##*/}
+
+        #
+        # Get branch
+        #
+        branch=${vaultconf##*/}
+        branch=${branch%*.conf}
+
+        #
+        # Print vault
+        #
+        echo "${bank}:${vault}:${branch}"
+    done
+}    # _listvaults()
+
+
+#
+# Function _print()
+#
+function _print {
+    declare -r msg=$1
+    declare -r prefix="$(date +'%b %d %T') $HOSTNAME ${basename}:"
+
+    if [ -n "${msg}" ] && [ ${qset} = false ]; then
+        echo ${prefix} ${msg}
+    fi
+}    # _print()
+
+
+#
+# Function _printerr()
+#
+function _printerr {
+    declare -r msg=$1
+    declare -r prefix="$(date +'%b %d %T') $HOSTNAME ${basename}:"
+
+    if [ -n "${msg}" ] && [ ${qset} = false ]; then
+        echo ${prefix} ${msg} > /dev/stderr
+    fi
+}    # _printerr()
+
+
+#
+# Function _usage()
+#
+function _usage {
+    cat <<!
+usage: ${basename} -h
+       ${basename} -V
+       ${basename} [-c config-file] -l
+       ${basename} [-c config-file] [-q] [-t HHMM] [-v vault [..]]
+!
+}    # _usage()
+
+
+#
+# Function _version()
+#
+function _version {
+    echo ${basename} v${version}
+}    # _version()
+
+
+#
+# Global environment
+#
+declare cset=false
+declare hset=false
+declare lset=false
+declare qset=false
+declare tset=false
+declare vset=false
+declare Vset=false
+declare version="0.1"
+declare imagetime=""
+declare -a selectedvaults=()
+declare -r basename=${0##*/}
+declare masterconf=/etc/dirvish.conf
+
+if ! [ -r ${masterconf} ]; then
+    masterconf=/etc/dirvish/master.conf
+fi
+
+
+#
+# Main process
+#
+
+#
+# Process options
+#
+_getopts "$@"
+
+#
+# Check options
+#
+if (( $? != 0 )); then
+    _usage
+    exit 1
+fi
+
+if [ ${hset} = true ]; then
+    _help
+    exit 0
+fi
+
+if [ ${Vset} = true ]; then
+    _version
+    exit 0
+fi
+
+#
+# Check dirvish master configuration file
+#
+if [ -z "${masterconf}" ] || [ ! -r ${masterconf} ]; then
+    _printerr "Configuration file '$masterconf' don't found or read-only!"
+    exit 2
+fi
+
+#
+# Do selected action
+#
+if [ ${lset} = true ]; then
+    _listvaults
+else
+    _initvaults
+fi

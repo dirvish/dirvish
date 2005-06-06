@@ -1,0 +1,116 @@
+# dirvish-locate.pod
+# 1.3.X series
+# Copyright 2005 by the dirvish project
+# http://www.dirvish.org
+#
+# Last Revision   : $Rev: 14 $
+# Revision date   : $Date: 2005-02-11 12:06:20 -0800 (Fri, 11 Feb 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/dirvish-locate.pod $
+
+=head1 NAME
+
+dirvish-locate - locate file versions in dirvish images
+
+=head1 SYNOPSIS
+
+B<dirvish-locate> I<vault>[I<:branch>] I<pattern>
+
+=head1 DESCRIPTION
+
+Locate versions of files in a dirvish vault
+
+The index of each image specified I<vault> is searched for paths
+matching I<pattern>. Each path found matching the I<pattern> will be
+reported followed by a modification time of each version of the file
+and all images having a link to it.
+
+The optional I<branch> specification will restrict searching to the
+specified branch.
+
+Images with an error status will be skipped as will any without index
+files. The index file may be compressed by gzip or bzip2. See B<tree>
+and B<index> in B<dirvish.conf(5)> for details.
+
+The I<pattern> is a B<perl> regular expression to match the final
+component of the path. Append B<.*> to the end of the pattern if you
+wish to match any substring of the whole path or B<$> if you wish to
+anchor the pattern to the end of the path. See B<perlre(1)> for
+details.
+
+Directories are excluded from matching as they would wind up matching
+every file within them anyway. Symlinks are also excluded from
+matching.
+
+If the I<pattern> matches too many paths B<dirvish-locate> will only
+report the paths matched and not versions. As a sanity check if the
+number of matches is really excessive B<dirvish-locate> will limit the
+number of images searched. Excessive matches is an indication of an
+insufficiently specific I<pattern>. Use the resulting path list to
+compose a more specific one.
+
+=head1 EXIT CODES
+
+To facilitate further automation and integration of B<dirvish-locate>
+with other tools B<dirvish-locate provides rationalized exit codes.>
+The exit codes are range based. While the code for a specific error may
+change from one version to another it will remain within the specified
+range. So don't test for specific exit codes but instead test for a
+range of values. To the degree possible higher value ranges indicate
+more severe errors.
+
+=over 10
+
+=item B<0>
+
+success 200-219 An error was encountered in loading a configuration
+file.
+
+
+=item B<220-254>
+
+An error was detected in the configuration.
+
+
+=item B<255>
+
+Incorrect usage.
+
+=back
+
+=head1 FILES
+
+B</etc/dirvish/master.conf>
+
+alternate master configuration file.
+
+B</etc/dirvish.conf>
+
+master configuration file.
+
+I<bank/vault/image/>B<summary>
+
+image creation summary.
+
+I<bank/vault/image/>B<index>
+
+I<bank/vault/image/>B<index.gz>
+
+I<bank/vault/image/>B<index.bz2>
+
+dirvish index file.
+
+=head1 SEE ALSO
+
+ dirvish.conf(5)
+
+=head1 AUTHOR
+
+Dirvish was created by J.W. Schultz of Pegasystems Technologies.
+
+Dirvish is now maintained by Keith Lofstrom at www.dirvish.org , with
+the able assistance of many others.
+
+=head1 BUGS
+
+=cut
