@@ -27,8 +27,15 @@ perl -MCPAN -e shell      # if you haven't run CPAN before, expect lots of quest
  cpan>  install Time::ParseDate
  cpan>  install Time::Period
 
-Then you can start the bu
 
+Module::Build changes permissions of the Build.PL file.  Fix it with
+   chmod 755 Build.PL
+
+Then you can start the build with 
+    ./Build.PL
+
+Look in the comments in Build.PL or INSTALL.pod for more information.
+This will get a lot cleaner on the 1.4 production release.
 
 
 Notes:  ----
