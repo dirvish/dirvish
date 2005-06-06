@@ -1,6 +1,5 @@
 #!/bin/bash
 #
-#
 # ALIRA (Advance Linux Research Area)
 # Copyright (c) May 2005, Servitic
 #
@@ -10,17 +9,10 @@
 # Symbolic Link:
 # OS Name:       SuSE Linux Professional v9.2
 #
-# Author(s):     Tomás Abad <tomas.abad@servitic.net>
-#
-#
+# Author(s):     Tomás Abad <tomas DOT abad AT servitic DOT net>
 
-#
-#
 # Purpose:
 #     Initialize dirvish vaults.
-#
-#
-
 
 #
 # Function _getbanks()
