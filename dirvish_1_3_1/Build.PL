@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 # Build.PL Script for dirvish
-# Version 0.5,  Keith Lofstrom,  2005-June-06
+# Version 0.5,  Keith Lofstrom,  2005-Jul-4
 #
 # Dirvish is installed with the following three step process:
 #
@@ -22,12 +22,12 @@
 #  ./Build realclean        # wipes out all the files made by ./Build.PL and
 #                           # ./Build ( _build, blib, and ./Build itself )
 #
-# This script will NEVER be run on a non-Unix machine.  It is not
-# well tested, and could use some scrutiny from someone who understands
-# Module::Build better than I do.
+#  ./Build dist             # produces tar.gz file
 #
-# There is a directory of contributed scripts included.  These are
-# not installed, but you may find them useful.
+# This script will NEVER be run on a non-Unix machine.  It is
+# neither complete nor well tested;  it is a placeholder to
+# gather comments about my probable misuse of Module::Build . 
+# I'm pretty sure I am doing a lot of things the hard way.
 
 use strict                 ;
 use Module::Build 0.26     ; # Debian will need to know about dependency
@@ -43,9 +43,6 @@ my $class = Module::Build->subclass(code => <<'EOF');
 # process a set of files, changing the path to blib and
 # creating any necessary subdirectories, returning a hash
 # containing files and targets
-#
-# EXTREME KLUDGE WARNING!!!!
-# I do NOT know the right way to do this!!!
 
 sub pathdir {
    my ($self, $ext ) = @_;
@@ -80,17 +77,19 @@ sub process_sbin_files {
    my $library     = 'dirvish.pl' ;
    my $dat         = localtime ;
  
-   my @apps_header = (
-      "#!/usr/bin/perl              \n", #FIXME should this be config'ed?
-      "#----------------------------\n",
-      "#Configured by Module::Build \n",
-      "#on $dat                     \n",
-      "# these lines prepended by $0\n",
-      "                             \n",
-      "\$CONFDIR = $conf;           \n",
-      "use        $share/$library;  \n",
-      "#----------------------------\n"
-   );
+   # changed to "here document" after suggestion by M. Schwern
+
+   my $apps_header = <<"END_HEADER";
+#!/usr/bin/perl
+#----------------------------
+# Configured by Module::Build
+# on $dat
+# these lines prepended by $0
+
+\$CONFDIR = $conf;
+use        $share/$library;
+#----------------------------
+END_HEADER
 
    # modify the files ----
 
@@ -101,7 +100,7 @@ sub process_sbin_files {
          or die "$0: cannot open $sourcefile for reading, $!";
       open( TARGETFILE, ">$targetfile" )
          or die "$0: cannot open $targetfile for writing, $!";
-      print TARGETFILE @apps_header ;  # copy header
+      print TARGETFILE $apps_header ;  # copy header
       print TARGETFILE <SOURCEFILE> ;  # copy rest of file
       close( SOURCEFILE ) or die "$0 cannot close $sourcefile, $!";
       close( TARGETFILE ) or die "$0 cannot close $targetfile, $!";
@@ -223,7 +222,6 @@ my $build = $class->new (
    #admin files with no processing
    admin_files => {
      'CHANGELOG'           => 'sharedoc/dirvish/CHANGELOG',
-     'CREDITS'             => 'sharedoc/dirvish/CREDITS',
      'COPYING'             => 'sharedoc/dirvish/COPYING',
      'README'              => 'sharedoc/dirvish/README',
      'dirvishlib.pl'       => 'share/dirvish/dirvishlib.pl'
