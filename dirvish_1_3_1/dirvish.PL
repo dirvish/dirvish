@@ -770,7 +770,7 @@ if ($Status eq 'success')
     if (open(HIST, ">>$vault/dirvish/$$Options{branch}.hist"))
     {
         $newhist == 1 and printf HIST ("#%s\t%s\t%s\t%s\n",
-                qw(IMAGE CREATED REFERECE EXPIRES));
+                qw(IMAGE CREATED REFERENCE EXPIRES));
         printf HIST ("%s\t%s\t%s\t%s\n",
                 $$Options{Image},
                 strftime('%Y-%m-%d %H:%M:%S', localtime),
