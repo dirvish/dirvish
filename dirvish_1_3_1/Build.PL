@@ -2,6 +2,11 @@
 # Build.PL Script for dirvish
 # Version 0.6,  Keith Lofstrom,  2005-Oct-01
 #
+# Last Revision   : $Rev$
+# Revision date   : $Date$
+# Last Changed by : $Author$
+# Stored as       : $HeadURL$
+#
 # Dirvish is installed with the following three step process:
 #
 #  perl Build.PL <options>

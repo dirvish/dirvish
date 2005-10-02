@@ -3,10 +3,10 @@
 # Copyright 2005 by the dirvish project
 # http://www.dirvish.org
 #
-# Last Revision   : $Rev: 21 $
-# Revision date   : $Date: 2005-02-20 20:24:53 -0800 (Sun, 20 Feb 2005) $
-# Last Changed by : $Author: keithl $
-# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_1/FAQ.pod $
+# Last Revision   : $Rev$
+# Revision date   : $Date$
+# Last Changed by : $Author$
+# Stored as       : $HeadURL$
 
 =head1 Dirvish FAQ
 
