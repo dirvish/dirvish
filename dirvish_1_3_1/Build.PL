@@ -75,7 +75,7 @@ sub process_sbin_files {
 
    my $conf        = $self->{properties}{install_path}{conf}   ;
    my $share       = $self->{properties}{install_path}{share}  ;
-   my $library     = 'dirvishlib.pl' ;
+   my $library     = 'dirvishlib' ;
    my $dat         = localtime ;
  
    # changed to "here document" after suggestion by M. Schwern
@@ -87,8 +87,10 @@ sub process_sbin_files {
 # on $dat
 # these lines prepended by $0
 
-\$CONFDIR = $conf;
-use        $share/dirvish/$library;
+\$CONFDIR = \"$conf\";
+use lib     \"$share/dirvish\";
+use         $library ;
+
 #----------------------------
 END_HEADER
 
