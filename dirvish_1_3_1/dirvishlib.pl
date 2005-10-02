@@ -6,9 +6,9 @@
 # Last Revision   : $Rev: 22 $
 # Revision date   : $Date: 2005-03-27 22:13:42 -0800 (Sun, 27 Mar 2005) $
 # Last Changed by : $Author: keithl $
-# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/dirvishlib.pl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_1/dirvishlib.pl $
 
-$VERSION = "1.3khl";
+$VERSION = "1.3.1";
 
 #########################################################################
 #                                                         		#
@@ -29,7 +29,7 @@ my %CodeID = (
     Rev    => '$Rev: 22 $'     ,
     Date   => '$Date: 2005-03-27 22:13:42 -0800 (Sun, 27 Mar 2005) $'    ,
     Author => '$Author: keithl $'  ,
-    URL    => '$HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/dirvishlib.pl $' ,
+    URL    => '$HeadURL: http://www.dirvish.org/svn/dirvish_1_3_1/dirvishlib.pl $' ,
 );
 
 #----------------------------------------------------------------------------

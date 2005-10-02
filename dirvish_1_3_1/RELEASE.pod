@@ -6,7 +6,7 @@
 # Last Revision   : $Rev: 14 $
 # Revision date   : $Date: 2005-02-11 12:06:20 -0800 (Fri, 11 Feb 2005) $
 # Last Changed by : $Author: keithl $
-# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_khl/RELEASE.pod $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_1/RELEASE.pod $
 
 =head1 DIRVISH RELEASE NOTES
 

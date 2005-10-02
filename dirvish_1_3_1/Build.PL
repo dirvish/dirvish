@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 # Build.PL Script for dirvish
-# Version 0.5,  Keith Lofstrom,  2005-Jul-4
+# Version 0.6,  Keith Lofstrom,  2005-Oct-01
 #
 # Dirvish is installed with the following three step process:
 #
-#  ./Build.PL <options>
+#  perl Build.PL <options>
 #  ./Build
 #  ./Build install <options>
 #
@@ -12,8 +12,8 @@
 # You can change these locations with options on the command line of
 # Build.PL or Build install, for example:
 #
-#       --install_path share=/usr/local/share
-#       --install_path sbin=/usr/local/sbin
+#   perl Build.PL    --install_path share=/usr/local/share
+#   ./Build install  --install_path sbin=/usr/local/sbin
 #
 # other exciting options:
 #
@@ -23,6 +23,7 @@
 #                           # ./Build ( _build, blib, and ./Build itself )
 #
 #  ./Build dist             # produces tar.gz file
+#                           # (bug - strips execute permission from Build.PL)
 #
 # This script will NEVER be run on a non-Unix machine.  It is
 # neither complete nor well tested;  it is a placeholder to
@@ -74,7 +75,7 @@ sub process_sbin_files {
 
    my $conf        = $self->{properties}{install_path}{conf}   ;
    my $share       = $self->{properties}{install_path}{share}  ;
-   my $library     = 'dirvish.pl' ;
+   my $library     = 'dirvishlib.pl' ;
    my $dat         = localtime ;
  
    # changed to "here document" after suggestion by M. Schwern
@@ -87,7 +88,7 @@ sub process_sbin_files {
 # these lines prepended by $0
 
 \$CONFDIR = $conf;
-use        $share/$library;
+use        $share/dirvish/$library;
 #----------------------------
 END_HEADER
 
