@@ -618,7 +618,11 @@ sub loadconfig
     while(<$CONFIG>)
     {
         chomp;
-        s/\s*#.*$//;
+#       s/\s*#.*$//;     This line replaced with the three following
+#                        suggested by Dave Howorth on 2005 Oct 27
+        s/^#.*$//;
+        s/\s*[^\\]#.*$//;
+        s/\\#/#/g;
         s/\s+$//;
         /\S/ or next;
       
