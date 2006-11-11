@@ -1,4 +1,4 @@
-# dirvishlib.pl
+# dirvishlib.pm
 # 1.3.X series
 # Copyright 2005 by the dirvish project
 # http://www.dirvish.org
@@ -48,7 +48,6 @@ sub imsort
 
 
 #----------------------------------------------------------------------------
-#
 #
 #                                           refactored from dirvish-expire.pl
 

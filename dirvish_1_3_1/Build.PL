@@ -72,6 +72,7 @@ sub pathdir {
 #
 # We need to add the location of the /config file/ and of
 # the /library/ to each application.  
+#    Remove this - use a perl module
 
 sub process_sbin_files {
    my ($self)      = @_;
