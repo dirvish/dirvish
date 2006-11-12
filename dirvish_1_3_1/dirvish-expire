@@ -65,7 +65,7 @@ EOUSAGE
 	exit 255;
 }
 
-reset_options();          # initialize the %$Options hash
+$Options = reset_options(\&usage, @ARGV);     # initialize the %$Options hash
 
 load_master_config();
 

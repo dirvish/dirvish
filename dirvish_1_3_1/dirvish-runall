@@ -63,7 +63,7 @@ EOUSAGE
 	exit 255;
 }
 
-reset_options();                 # initialize the %$Options hash
+$Options = reset_options(\&usage, @ARGV);     # initialize the %$Options hash
 
 GetOptions($Options, qw(
         config=s

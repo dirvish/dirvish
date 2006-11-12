@@ -41,7 +41,7 @@ use Module::Build 0.26     ; # Debian will need to know about dependency
 #===========================================================================
 # make a subclass with admin features here
 
-my $class = Module::Build->subclass(code => << 'EOF' );  #"
+my $class = Module::Build->subclass(code => << 'EOF' );  
 
 #--------------------------------------------------------------
 # pathdir
@@ -68,71 +68,33 @@ sub pathdir {
 }
 
 #--------------------------------------------------------------
-## Move the app files
-##
-
-sub process_sbin_files {
-#  my ($self)      = @_;
-#
-#  # make the header ----
-#
-#  my $conf        = $self->{properties}{install_path}{conf}   ;
-#  my $share       = $self->{properties}{install_path}{share}  ;
-#  my $library     = 'dirvishlib' ;
-#  my $dat         = localtime ;
-# 
-#  changed to "here document" after suggestion by M. Schwern
-#
-#  my $apps_header = <<"END_HEADER";
-##!/usr/bin/perl
-##----------------------------
-## Configured by Module::Build
-## on $dat
-## these lines prepended by $0
-#
-#\$CONFDIR = \"$conf\";
-#use lib     \"$share/dirvish\";
-#use         $library ;
-#
-##----------------------------
-#END_HEADER
-#
-#  # modify the files ----
-#
-#  my $files = $self->pathdir( 'sbin' );
-#
-#  while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
-#     open( SOURCEFILE, "<$sourcefile" )
-#        or die "$0: cannot open $sourcefile for reading, $!";
-#     open( TARGETFILE, ">$targetfile" )
-#        or die "$0: cannot open $targetfile for writing, $!";
-#     print TARGETFILE $apps_header ;  # copy header
-#     print TARGETFILE <SOURCEFILE> ;  # copy rest of file
-#     close( SOURCEFILE ) or die "$0 cannot close $sourcefile, $!";
-#     close( TARGETFILE ) or die "$0 cannot close $targetfile, $!";
-#     $self->make_executable($targetfile);
-#  }
-#
-#  $self->add_to_cleanup( values %$files );
-# };
-
-#--------------------------------------------------------------
 # make man pages out of pod files
 
 sub process_adminman_files {
    my ($self)      = @_;
    my $files       = $self->pathdir( 'adminman' );
+   my $sect        = 1 ;
    use  Pod::Man ;
 
-   my $parser      = Pod::Man->new( section => 1 );
 
    while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
-      # print "$sourcefile ---> $targetfile\n";
-      $parser->parse_from_file( $sourcefile, $targetfile );
-   };
+      if(    $targetfile =~ /8$/ ) {
+         $sect = 8 ;
+      }
+      elsif( $targetfile =~ /5$/ ) { 
+         $sect = 5 ;
+      }
+      else {
+         $sect = "man" ;
+      }
+      
+      my $parser      = Pod::Man->new(  release=> $VERSION, section => $sect );
 
+      print "$sourcefile ---> $targetfile\n";
+      $parser->parse_from_file( $sourcefile, $targetfile );
+   }
    $self->add_to_cleanup( values %$files );
-};
+}
 
 #---------------------------------------------------------------
 # make html pages out of pod files
@@ -143,20 +105,20 @@ sub process_adminhtml_files {
    use  Pod::Html ;
 
    while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
-      # print "$sourcefile ---> $targetfile\n";
+      print "$sourcefile ---> $targetfile\n";
       Pod::Html::pod2html(
          "--title=dirvish",
          "--infile=$sourcefile",
          "--outfile=$targetfile",
-      );
-   };
+      )
+   }
    $self->add_to_cleanup( values %$files );
 
    # for some reason there are left over files called
    # pod2htm*, delete them
    # FIXME
    unlink <pod2htm*> ;
-};
+}
 
 EOF
 
@@ -189,7 +151,7 @@ my $build = $class->new (
       sbin                  => '/usr/sbin' 
    },
 
-   #precursor app files with prepended variables
+   # app files with no processing
    sbin_files => {
       'dirvish'             => 'sbin/dirvish',
       'dirvish-locate'      => 'sbin/dirvish-locate',
@@ -230,7 +192,6 @@ my $build = $class->new (
      'CHANGELOG'           => 'sharedoc/dirvish/CHANGELOG',
      'COPYING'             => 'sharedoc/dirvish/COPYING',
      'README'              => 'sharedoc/dirvish/README',
-     'DirvishHack.pm'      => 'share/dirvish/dirvishlib.pl'
    }
 );
 
