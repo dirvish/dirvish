@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 # Build.PL Script for dirvish
-# Version 0.6,  Keith Lofstrom,  2005-Oct-01
+# Version 0.7,  Keith Lofstrom,  2006-Nov-11
 #
 # Last Revision   : $Rev$
 # Revision date   : $Date$
@@ -41,7 +41,7 @@ use Module::Build 0.26     ; # Debian will need to know about dependency
 #===========================================================================
 # make a subclass with admin features here
 
-my $class = Module::Build->subclass(code => <<'EOF');
+my $class = Module::Build->subclass(code => << 'EOF' );  #"
 
 #--------------------------------------------------------------
 # pathdir
@@ -68,56 +68,53 @@ sub pathdir {
 }
 
 #--------------------------------------------------------------
-# Modify the app files
-#
-# We need to add the location of the /config file/ and of
-# the /library/ to each application.  
-#    Remove this - use a perl module
+## Move the app files
+##
 
 sub process_sbin_files {
-   my ($self)      = @_;
-
-   # make the header ----
-
-   my $conf        = $self->{properties}{install_path}{conf}   ;
-   my $share       = $self->{properties}{install_path}{share}  ;
-   my $library     = 'dirvishlib' ;
-   my $dat         = localtime ;
- 
-   # changed to "here document" after suggestion by M. Schwern
-
-   my $apps_header = <<"END_HEADER";
-#!/usr/bin/perl
-#----------------------------
-# Configured by Module::Build
-# on $dat
-# these lines prepended by $0
-
-\$CONFDIR = \"$conf\";
-use lib     \"$share/dirvish\";
-use         $library ;
-
-#----------------------------
-END_HEADER
-
-   # modify the files ----
-
-   my $files = $self->pathdir( 'sbin' );
-
-   while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
-      open( SOURCEFILE, "<$sourcefile" )
-         or die "$0: cannot open $sourcefile for reading, $!";
-      open( TARGETFILE, ">$targetfile" )
-         or die "$0: cannot open $targetfile for writing, $!";
-      print TARGETFILE $apps_header ;  # copy header
-      print TARGETFILE <SOURCEFILE> ;  # copy rest of file
-      close( SOURCEFILE ) or die "$0 cannot close $sourcefile, $!";
-      close( TARGETFILE ) or die "$0 cannot close $targetfile, $!";
-      $self->make_executable($targetfile);
-   }
-
-   $self->add_to_cleanup( values %$files );
-};
+#  my ($self)      = @_;
+#
+#  # make the header ----
+#
+#  my $conf        = $self->{properties}{install_path}{conf}   ;
+#  my $share       = $self->{properties}{install_path}{share}  ;
+#  my $library     = 'dirvishlib' ;
+#  my $dat         = localtime ;
+# 
+#  changed to "here document" after suggestion by M. Schwern
+#
+#  my $apps_header = <<"END_HEADER";
+##!/usr/bin/perl
+##----------------------------
+## Configured by Module::Build
+## on $dat
+## these lines prepended by $0
+#
+#\$CONFDIR = \"$conf\";
+#use lib     \"$share/dirvish\";
+#use         $library ;
+#
+##----------------------------
+#END_HEADER
+#
+#  # modify the files ----
+#
+#  my $files = $self->pathdir( 'sbin' );
+#
+#  while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
+#     open( SOURCEFILE, "<$sourcefile" )
+#        or die "$0: cannot open $sourcefile for reading, $!";
+#     open( TARGETFILE, ">$targetfile" )
+#        or die "$0: cannot open $targetfile for writing, $!";
+#     print TARGETFILE $apps_header ;  # copy header
+#     print TARGETFILE <SOURCEFILE> ;  # copy rest of file
+#     close( SOURCEFILE ) or die "$0 cannot close $sourcefile, $!";
+#     close( TARGETFILE ) or die "$0 cannot close $targetfile, $!";
+#     $self->make_executable($targetfile);
+#  }
+#
+#  $self->add_to_cleanup( values %$files );
+# };
 
 #--------------------------------------------------------------
 # make man pages out of pod files
@@ -194,10 +191,10 @@ my $build = $class->new (
 
    #precursor app files with prepended variables
    sbin_files => {
-      'dirvish.PL'          => 'sbin/dirvish',
-      'dirvish-locate.PL'   => 'sbin/dirvish-locate',
-      'dirvish-expire.PL'   => 'sbin/dirvish-expire',
-      'dirvish-runall.PL'   => 'sbin/dirvish-runall'
+      'dirvish'             => 'sbin/dirvish',
+      'dirvish-locate'      => 'sbin/dirvish-locate',
+      'dirvish-expire'      => 'sbin/dirvish-expire',
+      'dirvish-runall'      => 'sbin/dirvish-runall'
    },
 
    #pod files converted to man
@@ -233,7 +230,7 @@ my $build = $class->new (
      'CHANGELOG'           => 'sharedoc/dirvish/CHANGELOG',
      'COPYING'             => 'sharedoc/dirvish/COPYING',
      'README'              => 'sharedoc/dirvish/README',
-     'dirvishlib.pl'       => 'share/dirvish/dirvishlib.pl'
+     'DirvishHack.pm'      => 'share/dirvish/dirvishlib.pl'
    }
 );
 

@@ -1,14 +1,28 @@
-# dirvishlib.pm
+package DirvishHack;
+
 # 1.3.X series
-# Copyright 2005 by the dirvish project
+# Copyright 2006 by the dirvish project
 # http://www.dirvish.org
+#
+#   This is tuned to work with dirvish 1.3.1 .  Please do not use
+#   for other applications until dirvish 1.3.X stabilizes.
 #
 # Last Revision   : $Rev$
 # Revision date   : $Date$
 # Last Changed by : $Author$
 # Stored as       : $HeadURL$
 
+use 5.006 ;
+require Exporter;
+@ISA      qw(Exporter);
+@EXPORT   qw( imsort check_expire findop seppuku config client
+              branch vault reset_options reset version errorscan
+              logappend scriptrun slurplist loadconfig
+              load_master_config check_exitcode
+            );
+
 $VERSION = "1.3.1";
+
 
 #########################################################################
 #                                                         		#
@@ -764,5 +778,5 @@ sub check_exitcode
     return 0;
 }
 #----------------------------------------------------------------------------
-# end of dirvishlib.pl
+# end of DirvishHack.pm
 1;

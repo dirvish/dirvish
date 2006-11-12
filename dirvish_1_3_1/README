@@ -40,10 +40,9 @@ This will get a lot cleaner on the 1.4 production release.
 
 Notes:  ----
 
-I have refactored all the subroutines into dirvishlib.pl .  We may
-want to make a package out of this instead.   I added a few subs
-to get rid of the anonymous subs in options, and a routine that
-incorporates the common code for loading the master.conf file, and
+I have refactored all the subroutines into DirvishHack.pm .  I added
+a few subs to get rid of the anonymous subs in options, and a routine
+that incorporates the common code for loading the master.conf file, and
 another routine that initializes the %$Options hash.   I am not yet
 initializing *everything* in the hash, but I think that might be a
 good move, depending on what we learn while building test harnesses.
