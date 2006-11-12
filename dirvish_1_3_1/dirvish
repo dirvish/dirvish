@@ -379,13 +379,16 @@ if ($$Options{Expire} && $$Options{Expire} !~ /Never/i)
     $$Options{Expire} = 'Never';
 }
 
-# logic updated on 2004-09-04 by EricM to handle spaces in directories on
-# windows boxen. 
-($srctree, $aliastree) = split(/[^\\]\s+/, $$Options{tree})   # esm 2004-09-04
-    or seppuku 228, "ERROR: no source tree defined";
-$srctree =~ s(\\ )( )g;                                       # esm 2004-09-04
-$srctree =~ s(/+$)();
-$aliastree =~ s(/+$)();
+# Logic updated on 2004-09-04 by EricM to handle spaces in directories on
+# windows boxen.   Further updated by KHL on 2006-11-11 to fix the problem
+# with eaten characters.
+
+$_ = $$Options{tree} ;
+s/(\s)/\\$1/g;    # These two lines swap the escaped spaces with
+s/\\\\//g;        # the nonescaped ones.
+s/(\\\s)+/$1/g;   # replace multiple separators with only one
+($srctree,$aliastree) = split /\\\s/
+       or seppuku 228, "ERROR: no source tree defined";
 $aliastree ||= $srctree;
 
 $destree  = join("/", $vault, $image, 'tree');
