@@ -1,0 +1,30 @@
+#!/bin/bash
+rm /usr/lib/perl5/site_perl/5.8.6/DirvishHack.pm
+rm /usr/share/man/man5/dirvish.conf.5
+rm /usr/share/man/man8/dirvish-locate.8
+rm /usr/share/man/man8/dirvish-runall.8
+rm /usr/share/man/man8/dirvish.8
+rm /usr/share/man/man8/dirvish-expire.8
+rm /usr/sbin/dirvish-locate
+rm /usr/sbin/dirvish-runall
+rm /usr/sbin/dirvish-expire
+rm /usr/sbin/dirvish
+rm /usr/share/doc/dirvish/INSTALL.man
+rm /usr/share/doc/dirvish/debian.howto.man
+rm /usr/share/doc/dirvish/FAQ.man
+rm /usr/share/doc/dirvish/TODO.man
+rm /usr/share/doc/dirvish/RELEASE.man
+rm /usr/share/doc/dirvish/dirvish-locate.html
+rm /usr/share/doc/dirvish/INSTALL.html
+rm /usr/share/doc/dirvish/debian.howto.html
+rm /usr/share/doc/dirvish/dirvish.conf.html
+rm /usr/share/doc/dirvish/dirvish-runall.html
+rm /usr/share/doc/dirvish/FAQ.html
+rm /usr/share/doc/dirvish/TODO.html
+rm /usr/share/doc/dirvish/dirvish.html
+rm /usr/share/doc/dirvish/dirvish-expire.html
+rm /usr/share/doc/dirvish/RELEASE.html
+rm /usr/share/doc/dirvish/CHANGELOG
+rm /usr/share/doc/dirvish/COPYING
+rm /usr/share/doc/dirvish/README
+
