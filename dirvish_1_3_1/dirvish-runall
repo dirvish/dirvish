@@ -28,7 +28,7 @@ my %CodeID = (
     Rev    => '$Rev$'     ,
     Date   => '$Date$'    ,
     Author => '$Author$'  ,
-    URL    => '$HeadUR$' ,
+    URL    => '$HeadURL$' ,
 );
 
 $VERSION =   $CodeID{URL};

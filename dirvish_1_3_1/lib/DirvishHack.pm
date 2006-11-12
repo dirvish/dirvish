@@ -1,4 +1,4 @@
-package DirvishHack;
+package main;      # I said it's a hack, dammit!
 
 # 1.3.X series
 # Copyright 2006 by the dirvish project
@@ -13,20 +13,20 @@ package DirvishHack;
 # Last Changed by : $Author$
 # Stored as       : $HeadURL$
 
-use       5.006 ;
-require   Exporter;
-@ISA      = qw(Exporter);
-@EXPORT   = qw( imsort check_expire findop seppuku config client
-              branch vault reset_options reset version errorscan
-              logappend scriptrun slurplist loadconfig
-              load_master_config check_exitcode
-            );
+# use       5.006 ;
+# require   Exporter;
+# @ISA      = qw(Exporter);
+# @EXPORT   = qw( imsort check_expire findop seppuku config client
+#              branch vault reset_options reset version errorscan
+#              logappend scriptrun slurplist loadconfig
+#              load_master_config check_exitcode
+#            );
 
 $VERSION = "1.3.1";
 
 #should CONFDIR be 'my' or 'our'?
 $CONFDIR = "##CONFDIR##" ;  # this may get replaced by ModuleBuild 
-$CONFDIR    = "/etc/dirvish" if( $CONFDIR =~ /##/ );
+$CONFDIR = "/etc/dirvish" if( $CONFDIR =~ /##/ );
 
 #########################################################################
 #                                                         		#
