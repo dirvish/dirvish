@@ -154,6 +154,8 @@ my $build = $class->new (
 
    module_name        => 'dirvish',
    dist_version       => '1.3.1',
+   dist_author        => 'Keith Lofstrom',
+   dist_abstract      => 'Dirvish, disk-to-disk backup using rsync',
    license            => 'open_source',
    create_makefile_pl => 'traditional',
 

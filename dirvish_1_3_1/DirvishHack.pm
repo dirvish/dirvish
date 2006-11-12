@@ -1,7 +1,5 @@
 package DirvishHack ;  
 
-#  package main;      # I said it's a hack, dammit!
-
 # 1.3.X series
 # Copyright 2006 by the dirvish project
 # http://www.dirvish.org

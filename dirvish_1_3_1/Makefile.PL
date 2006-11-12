@@ -5,7 +5,8 @@ WriteMakefile
           'PL_FILES' => {},
           'INSTALLDIRS' => 'site',
           'NAME' => 'dirvish',
-          'VERSION' => '1.3.1',
+          'EXE_FILES' => [],
+          'VERSION_FROM' => 'lib/dirvish.pm',
           'PREREQ_PM' => {
                            'Getopt::Long' => 0,
                            'Time::Period' => 0,
