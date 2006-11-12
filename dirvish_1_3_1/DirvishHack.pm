@@ -1,4 +1,6 @@
-package main;      # I said it's a hack, dammit!
+package DirvishHack ;  
+
+#  package main;      # I said it's a hack, dammit!
 
 # 1.3.X series
 # Copyright 2006 by the dirvish project
@@ -13,18 +15,25 @@ package main;      # I said it's a hack, dammit!
 # Last Changed by : $Author$
 # Stored as       : $HeadURL$
 
-# use       5.006 ;
-# require   Exporter;
-# @ISA      = qw(Exporter);
-# @EXPORT   = qw( imsort check_expire findop seppuku config client
-#              branch vault reset_options reset version errorscan
-#              logappend scriptrun slurplist loadconfig
-#              load_master_config check_exitcode
-#            );
+use       5.006 ;
+require   Exporter;
+@ISA      = qw(Exporter);
+@EXPORT   = qw( imsort imsort_locate check_expire findop seppuku config
+             client branch vault reset_options reset version errorscan
+             logappend scriptrun slurplist loadconfig check_exitcode
+             load_master_config
+             seppuku_prefix log_file fsb_file expire_time expires
+             confdir
+           );
+
+use POSIX qw(strftime);
+use Getopt::Long;
+use Time::ParseDate;
+use Time::Period;
+use File::Find;
 
 $VERSION = "1.3.1";
 
-#should CONFDIR be 'my' or 'our'?
 $CONFDIR = "##CONFDIR##" ;  # this may get replaced by ModuleBuild 
 $CONFDIR = "/etc/dirvish" if( $CONFDIR =~ /##/ );
 
@@ -50,8 +59,12 @@ my %CodeID = (
     URL    => '$HeadURL$' ,
 );
 
-$Options     = 0 ;
-$CommandArgs = 0 ;
+# $Options     = {} ;
+$CommandArgs = 0  ;
+
+#----------------------------------------------------------------------------
+# 
+sub confdir { return $CONFDIR };
 
 #----------------------------------------------------------------------------
 #
@@ -62,8 +75,16 @@ $CommandArgs = 0 ;
 
 sub imsort
 {
-    $$a{vault} cmp $$b{vault}        # this line was NOT in dirvish-locate
+    $$a{vault} cmp $$b{vault}  
     || $$a{branch} cmp $$b{branch}
+    || $$b{created} cmp $$a{created};
+}
+
+# why is this different for dirvish-locate?
+
+sub imsort_locate
+{
+    $$a{branch} cmp $$b{branch}
     || $$b{created} cmp $$a{created};
 }
 
@@ -96,6 +117,10 @@ sub check_expire
     return 1;
 }
 
+#----------------------------------------------------------------------------
+#                                                      added KHL
+# sets up $expires, a reference to the global @expires array
+sub expires { ($expires) = @_ }
 
 #----------------------------------------------------------------------------
 # findop -- is used by dirvish-expire to look for summary files in a bank.
@@ -145,25 +170,31 @@ sub findop
 
         -d ($path . ($$Options{tree} ? '/tree': undef)) or return;
 
-        push (@expires, {
-                vault    => $$summary{vault},
-                branch    => $$summary{branch},
-                client    => $$summary{client},
+        push (@{$expires}, {
+                vault   => $$summary{vault},
+                branch  => $$summary{branch},
+                client  => $$summary{client},
                 tree    => $$summary{tree},
-                image    => $$summary{Image},
-                created    => $$summary{'Backup-complete'},
-                expire    => $$summary{Expire},
-                status    => $$summary{Status},
+                image   => $$summary{Image},
+                created => $$summary{'Backup-complete'},
+                expire  => $$summary{Expire},
+                status  => $$summary{Status},
                 path    => $path,
             }
         );
     }
 }
 
+#----------------------------------------------------------------------------
+$expire_time = 0;
+sub expire_time { ($expire_time) = @_ }
 
 #----------------------------------------------------------------------------
 # seppuku -- Exit with code and message.
 #                                               refactored from loadconfig.pl
+
+
+$seppuku_prefix = 0;
 
 sub seppuku
 {
@@ -176,6 +207,11 @@ sub seppuku
         print STDERR $message, "\n";
     }
     exit $status;
+}
+
+sub seppuku_prefix
+{
+   ($seppuku_prefix) = @_;
 }
 
 #----------------------------------------------------------------------------
@@ -292,6 +328,7 @@ sub reset_options
       # 'password-file'	=> undef     ,
       # 'rsync-client'	=> undef     ,
     };
+
     return $Options ;
 } 
 
@@ -425,6 +462,16 @@ sub errorscan
 }
 
 #----------------------------------------------------------------------------
+#
+#
+
+$log_file = 0 ;
+sub log_file { ($log_file) = @_ ; }
+$fsb_file = 0 ;
+sub fsb_file { ($fsb_file) = @_ ; }
+
+
+#----------------------------------------------------------------------------
 # logappend --
 #
 #                                                refactored from loadconfig.pl
@@ -447,7 +494,7 @@ sub logappend
 #----------------------------------------------------------------------------
 # scriptrun --
 #
-#                                               refactored from dirvish.pl.pl
+#                                               refactored from dirvish.pl
 
 sub scriptrun
 {
@@ -545,8 +592,6 @@ sub slurplist
 #
 #   	g	Only load from global directory.
 #
-#	
-#   
 #   LIMITATIONS
 #   	Only way to tell whether an option should be a list
 #   	or scalar is by the formatting in the config file.
@@ -580,7 +625,6 @@ sub loadconfig
         }
     }
 
-
     $CONFIG = 'CFILE' . scalar(@{$$Options{Configfiles}});
 
     $configfile =~ s/^.*\@//;
@@ -608,8 +652,7 @@ sub loadconfig
             if ($$Options{Bank})
             {
                 $confile = join('/', $$Options{Bank},
-                    $$Options{vault}, 'dirvish',
-                    $configfile);
+                    $$Options{vault}, 'dirvish', $configfile);
                 -f $confile || -f "$confile.conf"
                     or $confile = undef;
             }
@@ -626,14 +669,16 @@ sub loadconfig
         if (! -f "$confile")
         {
             $modes{o} and return undef;
-            seppuku 222, "cannot open config file: $configfile";
+            # seppuku 222, "cannot open config file: $configfile";
+            seppuku 222, "cannot open config file: $confile";
         }
 
         grep(/^$confile$/, @{$$Options{Configfiles}})
             and seppuku 224, "ERROR: config file looping on $confile";
 
         open($CONFIG, $confile)
-            or seppuku 225, "cannot open config file: $configfile";
+            # or seppuku 225, "cannot open config file: $configfile";
+            or seppuku 225, "cannot open config file: $confile";
     }
     push(@{$$Options{Configfiles}}, $confile);
 
@@ -728,15 +773,16 @@ sub loadconfig
 
 sub  load_master_config
 {
+    my $Config = 0;
     # load master configuration file
 
     if ($CONFDIR =~ /dirvish$/ && -f "$CONFDIR.conf")
     {
-        loadconfig('f', "$CONFDIR.conf", $Options);
+        $Config = loadconfig('f', "$CONFDIR.conf", $Options);
     }
     elsif (-f "$CONFDIR/master.conf")
     {
-        loadconfig('f', "$CONFDIR/master.conf", $Options);
+        $Config = loadconfig('f', "$CONFDIR/master.conf", $Options);
     }
     elsif (-f "$CONFDIR/dirvish.conf")
     {

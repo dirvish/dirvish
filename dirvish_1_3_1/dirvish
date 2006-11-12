@@ -282,7 +282,9 @@ $image =~ /%/
 !$$Options{branch} || ref($$Options{branch})
     and $$Options{branch} = $$Options{'branch-default'} || 'default';
 
-$seppuku_prefix = join(':', $$Options{vault}, $$Options{branch}, $image);
+# seppuku_prefix = join(':', $$Options{vault}, $$Options{branch}, $image);
+
+seppuku_prefix( join(':', $$Options{vault}, $$Options{branch}, $image) ); 
 
 if (-d "$vault/$$Options{'image-temp'}" && $image eq $$Options{'image-temp'})
 {
@@ -394,6 +396,9 @@ $log_file = join("/", $vault, $image, 'log');
 $log_temp = join("/", $vault, $image, 'log.tmp');
 $exl_file = join("/", $vault, $image, 'exclude');
 $fsb_file = join("/", $vault, $image, 'fsbuffer');
+
+log_file( $log_file );
+fsb_file( $fsb_file );
 
 while (($k, $v) = each %RSYNC_OPT)
 {

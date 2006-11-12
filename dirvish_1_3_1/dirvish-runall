@@ -63,7 +63,13 @@ EOUSAGE
 	exit 255;
 }
 
-$Options = reset_options(\&usage, @ARGV);     # initialize the %$Options hash
+$Options = {
+        version         => sub {
+                        print STDERR "dirvish version $VERSION\n";
+                        exit(0);
+                },
+        help            => \&usage,
+};
 
 GetOptions($Options, qw(
         config=s
@@ -71,16 +77,27 @@ GetOptions($Options, qw(
         version help
     )) or usage;
 
-if ($$Options{config})
-{
-    $Config = loadconfig(undef, $$Options{config})
-}
-else
-{
-    load_master_config() ;
-}
+$CONFDIR = confdir();
 
-
+if ($$Options{config}) {
+        $Config = loadconfig(undef, $$Options{config})
+}
+elsif ($CONFDIR =~ /dirvish$/ && -f "$CONFDIR.conf") {
+        $Config = loadconfig(undef, "$CONFDIR.conf");
+}
+elsif (-f "$CONFDIR/master.conf") {
+        $Config = loadconfig(undef, "$CONFDIR/master.conf");
+}
+elsif (-f "$CONFDIR/dirvish.conf") {
+        seppuku 250, <<EOERR;
+ERROR: no master configuration file.
+        An old $CONFDIR/dirvish.conf file found.
+        Please read the dirvish release notes.
+EOERR
+}
+else {
+        seppuku 251, "ERROR: no global configuration file";
+}
 $$Config{Dirvish} ||= 'dirvish';
 
 $$Options{'no-run'} and $$Options{quiet} = 0;

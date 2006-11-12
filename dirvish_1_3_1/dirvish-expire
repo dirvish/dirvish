@@ -84,6 +84,10 @@ ref($$Options{vault}) and $$Options{vault} = undef;
 $$Options{time} and $expire_time = parsedate($$Options{time});
 $expire_time ||= time;
 
+# added to connect to the DirvishHack package
+@expires = ();
+expires(     \@expires    );
+expire_time( $expire_time );
 
 if ($$Options{vault})
 {

@@ -108,7 +108,7 @@ for $image (@invault)
     }
 }
 
-for $image (sort(imsort @images))
+for $image (sort(imsort_locate @images))
 {
     $imdir = $$image{imdir};
 

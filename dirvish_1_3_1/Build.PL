@@ -68,6 +68,30 @@ sub pathdir {
 }
 
 #--------------------------------------------------------------
+# Modify lib files to add configuration
+
+sub process_lib_files {
+   my ($self)      = @_;
+   my $files       = $self->pathdir( 'lib' );
+   my $conf        = $self->{properties}{install_path}{conf}   ;
+   
+   while ( my ( $sourcefile, $targetfile ) = each  %$files ) {
+      open( SOURCEFILE, "<$sourcefile" )
+         or die "$0: cannot open $sourcefile for reading, $!";
+      open( TARGETFILE, ">$targetfile" )
+         or die "$0: cannot open $targetfile for writing, $!";
+      while( <SOURCEFILE> ) {
+         s(##CONFDIR##)($conf);
+         print TARGETFILE ;  # copy rest of file
+      }
+      close( SOURCEFILE ) or die "$0 cannot close $sourcefile, $!";
+      close( TARGETFILE ) or die "$0 cannot close $targetfile, $!";
+      $self->make_executable($targetfile);
+   }
+   $self->add_to_cleanup( values %$files );
+}
+
+#--------------------------------------------------------------
 # make man pages out of pod files
 
 sub process_adminman_files {
@@ -128,9 +152,9 @@ EOF
 
 my $build = $class->new (
 
-   module_name  => 'dirvish',
-   dist_version => '1.3.1',
-   license      => 'open_source',
+   module_name        => 'dirvish',
+   dist_version       => '1.3.1',
+   license            => 'open_source',
    create_makefile_pl => 'traditional',
 
    requires => {
@@ -139,7 +163,7 @@ my $build = $class->new (
       'File::Find'          => 0,
       'Getopt::Long'        => 0,
       'Time::ParseDate'     => 0,
-      'Time::Period'        => 0
+      'Time::Period'        => 0,
    },
 
    install_path => { 
@@ -148,7 +172,12 @@ my $build = $class->new (
       sharedoc              => '/usr/share/doc',
       man5dir               => '/usr/share/man/man5',
       man8dir               => '/usr/share/man/man8',
-      sbin                  => '/usr/sbin' 
+      sbin                  => '/usr/sbin',
+   },
+
+   #lib files with CONFIG location processing
+   lib_files => {
+     'DirvishHack.pm'      => 'lib/DirvishHack.pm',
    },
 
    # app files with no processing
@@ -156,7 +185,7 @@ my $build = $class->new (
       'dirvish'             => 'sbin/dirvish',
       'dirvish-locate'      => 'sbin/dirvish-locate',
       'dirvish-expire'      => 'sbin/dirvish-expire',
-      'dirvish-runall'      => 'sbin/dirvish-runall'
+      'dirvish-runall'      => 'sbin/dirvish-runall',
    },
 
    #pod files converted to man
@@ -170,7 +199,7 @@ my $build = $class->new (
       'INSTALL.pod'         => 'sharedoc/dirvish/INSTALL.man',
       'FAQ.pod'             => 'sharedoc/dirvish/FAQ.man',
       'TODO.pod'            => 'sharedoc/dirvish/TODO.man',
-      'debian.howto.pod'    => 'sharedoc/dirvish/debian.howto.man'
+      'debian.howto.pod'    => 'sharedoc/dirvish/debian.howto.man',
    },
 
    #pod files converted to html (redundant, but more options for users)
@@ -184,7 +213,7 @@ my $build = $class->new (
       'debian.howto.pod'    => 'sharedoc/dirvish/debian.howto.html',
       'RELEASE.pod'         => 'sharedoc/dirvish/RELEASE.html',
       'TODO.pod'            => 'sharedoc/dirvish/TODO.html',
-      'FAQ.pod'             => 'sharedoc/dirvish/FAQ.html'
+      'FAQ.pod'             => 'sharedoc/dirvish/FAQ.html',
    },
 
    #admin files with no processing
@@ -202,6 +231,7 @@ $build->add_build_element('sbin');
 $build->add_build_element('adminman');
 $build->add_build_element('adminhtml');
 $build->add_build_element('admin');
+$build->add_build_element('lib');
 
 #-----------------------------------------------
 # make the Build script
