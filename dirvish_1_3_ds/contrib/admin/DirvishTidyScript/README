@@ -1,0 +1,89 @@
+
+==============================================
+Script to remove unaccounted-for backup images
+==============================================
+
+If dirvish encounters an error while backing up a machine, it will leave
+the partial image on the file system. However, since no record of this
+attempt is stored in default.hist for that machine, the image never
+gets purged by dirvish-expire.
+
+This script will find such images.
+
+This assumes no directory except backup images and dirvish/ are in
+each vault.
+
+dirvish-tidy.sh
+-----------------------------------------------------------------------------
+#!/bin/sh
+# Syntax:
+#   dirvish-tidy [-q]
+#   dirvish-tidy -l
+#
+#  -q  Be quiet; Do not output information.
+#  -l  Do not actually remove the images, only list them
+#  -h
+BANK=/backup
+AGE=7  # Don't delete partials newer than this many days
+
+# Make sure no dirvish job is running
+x=`ps -ef | grep dirvish | wc -l`
+if [ $x -gt 3 ] ; then
+       echo "Error: Dirvish is running. Stop."
+       exit 2
+fi
+
+while [ "z$1" != "z" ]; do
+       if [ "$1" == '-l' ]; then
+               LIST="Y"
+       else
+               LIST="N"
+       fi
+
+       if [ "$1" == '-q' ]; then
+               QUIET="Y"
+       else
+               QUIET="N"
+       fi
+       if [ $1 == -h ]; then
+               echo 'dirvish-tidy.sh: Prune partial backup images'
+               echo 'USAGE: dirvish-tidy [-q -l -h]'
+               echo '      -q: quite'
+               echo '      -l: list images only, don''t prune'
+               echo '      -h: help line'
+               exit 0
+       fi
+       shift
+done
+
+cd $BANK || (echo "Warning: Cannot cd into $BANK"; exit 1)
+
+for f in *; do
+       if [ -d $f ]; then
+       xx=`cd $f; find * -maxdepth 0 -type d -mtime +$AGE -not -name dirvish 2>/dev/null`
+       for g in $xx; do
+               # echo image: $f/$g
+               if [ -f $f/dirvish/daily.hist ]; then
+                       if [ `grep -c "^$g" $f/dirvish/daily.hist` -eq 0 ]; then
+                               if [ "$LIST" = "Y" ]; then
+                                       echo "$f/$g"
+                               else
+                                       if [ "$QUIET" = "N" ]; then
+                                               echo "$f/$g is not logged in the history file"
+                                       fi
+                                       rm -rf $f/$g
+                               fi
+                       fi
+               fi
+       done
+       fi
+done
+-----------------------------------------------------------------------------
+
+Changes
+
+Jason Cater  08/13/04   Initial page created.
+Matt Munnich 02/07/05   Added crude check if dirvish is running.
+                        Removed restriction to 20... backup images.
+
+

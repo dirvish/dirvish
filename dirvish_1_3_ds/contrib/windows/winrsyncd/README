@@ -1,0 +1,106 @@
+
+Backing up a Windows machine using rsyncd
+=========================================
+
+First, you need to install http://winrsync.sunsite.dk/ on your windows
+machine.
+
+If you already have Cygwin installed, it also includes an rsync binary;
+adjust the command lines in the files below appropriately; winrsync
+includes only the cygwin .dll and rsync binaries.)
+
+On the client machine, copy the sample rsyncd.conf, rsyncd.secrets,
+and rsyncd.bat files below to c:\program files\winrsync\.
+
+Finally, make Windows run the rsyncd.bat file on startup.
+
+============
+Client Files
+============
+
+These files need to be present on the Windows machine. I put them all
+in the same directory as the Winrsync binaries, but you could of
+course put them elsewhere.
+
+
+c:\program files\winrsync\rsyncd.conf
+-----------------------------------------------------------------
+gid = users
+read only = true
+use chroot = false
+transfer logging = false
+log file = rsyncd.log
+log format = %h %o %f %l %b
+hosts allow = 192.168.0.253
+hosts deny = 0.0.0.0/0
+strict modes = false
+
+[backups]
+path = /cygdrive/c/
+auth users = backups
+secrets file = rsyncd.secrets
+--------------------------------------------------------------------
+Note: You need to change 192.168.0.253 to be the address of your
+dirvish server. You could also use a hostname, or use a subnet
+(192.168.0.0/24, for example.) This line restricts what machines
+can access the share.
+
+You can also change path= to just be a specific directory 
+e.g., c:\documents\ would be path=/cygdrive/c/documents/)
+
+
+
+c:\program files\winrsync\rsyncd.bat
+--------------------------------------------------------------------
+@ECHO OFF
+cd c:\PROGRA~1\winrsync
+c:\PROGRA~1\winrsync\support\rsync --daemon --config rsyncd.conf
+------------------------------------------------------------------
+The rsyncd.bat script needs to be run on Windows startup to start
+the rsync daemon as a background process.
+
+
+c:\program files\winrsync\rsyncd.secrets
+--------------------------------------------------------------------
+backups:mypassword
+------------------------------------------------------------------
+Change mypassword to a better password, of course. :)
+
+
+============
+Server Files
+============
+These files are for the dirvish server.
+
+Your default.conf file for the windows machine will look like:
+
+default.conf
+------------------------------------------------------------------
+client: backups@<winmachine>
+password-file: /etc/dirvish/win.password
+tree: :backups
+   ... rest of file ...
+------------------------------------------------------------------
+(with any additional site-wide preferences you have.)
+
+Note the leading colon on the tree: line. :backups means use the
+backups share on the Windows rsyncd server. We define backups in
+our client-side rsyncd.conf file to point to the c:\ directory.
+
+Note: If you have multiple windows machines and don't want to
+have the same password on each, you may need a separate
+/etc/dirvish/win.password file. In that case, you may want to
+store the password file in the same directory as your default.conf
+file. Adjust the config above as needed.
+
+/etc/dirvish/win.password
+-----------------------------------------------------------------
+mypassword
+-----------------------------------------------------------------
+This should match the password in rsyncd.secrets. make sure the
+copy on your dirvish machine has permissions of 600.
+
+
+History
+
+Jason Cater  08/13/04   Initial page added.
