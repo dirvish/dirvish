@@ -3,10 +3,10 @@
 # Copyright 2005 by the dirvish project
 # http://www.dirvish.org
 #
-# Last Revision   : $Rev$
-# Revision date   : $Date$
-# Last Changed by : $Author$
-# Stored as       : $HeadURL$
+# Last Revision   : $Rev: 57 $
+# Revision date   : $Date: 2005-10-02 03:40:37 +0200 (So, 02 Okt 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_1/FAQ.pod $
 
 =head1 Dirvish FAQ
 
@@ -207,6 +207,9 @@ tolerance is a good idea. RAID-5 isn't nearly as expensive as mirroring
 and should be more than fast enough. Logical Volume management is also
 a good idea for the vaults as you will probably wish to resize some of
 them over time.
+
+On Linux, using XFS for the bank has proven to be very fast, especially
+for dirvish-expire.
 
 ------------------------------------------------------ back to L</Dirvish FAQ>.
 
@@ -618,6 +621,17 @@ executable on the I<client>, not the dirvish I<server>.
 
 You may not need to run any scripts at all, in which case the 
 configuration files should not have options for them.
+
+------------------------------------------------------ back to L</Dirvish FAQ>.
+
+=head1 Environments
+
+=head2 Linux-Vserver
+
+Please note that dirvish won't run properly on Linux-Vserver guests,
+because it can't create some special files correctly. If you plan to
+run dirvish inside a Vserver guest you should make sure that special
+files (/proc, /dev, etc.) are excluded.
 
 ------------------------------------------------------ back to L</Dirvish FAQ>.
 

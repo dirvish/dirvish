@@ -1,0 +1,57 @@
+dirvish
+
+todo:
+! debian: require schedutils, libcurses-ui-perl, libwww-perl
+! http://wiki.dirvish.org/index.cgi?RestoreWholeDisk
+! create nice Makefile w/ uninstall target
+! remove/rename incomplete backups
+! graph data usage (?) - see rsnapgraph
+! add munin plugin (contrib) to show length of runs, disk-usage, etc.
+? check fslint/findup -m to reduce storage requirements
+? add alternate concurrency using fork
+? concurrency: differntiate between local and remote queues (only on local backup at once, but multiple remote)
+? debian packaging included
+- incorporate changes from debian packages
+- write to logfile when SIGnaled to be killed
+- see File::Spec::Functions, File::Basename for portablity
+? add threads to dirvish-expire?
+- add email reporing
+- add logging to syslog
+- clean code (move subs to bottom, add comments, ...) - see rsnapshot
+- http://wiki.dirvish.org/index.cgi?VerboseDebug
+- http://wiki.dirvish.org/index.cgi?LongerSummary
+- http://wiki.dirvish.org/index.cgi?RestoreSomeFiles
+- http://wiki.dirvish.org/index.cgi?ChmodOnExpire
+- resume backups
+
+ideas:
+* web-based frontend for dirivsh (CGI)
+- nice web-page, including security contact, FAQ, screenshots, man page, etc.
+
+done:
+* rename DirvishHack.pm to Dirvish.pm, refactor all common code to Dirvish.pm
+* use strict
+* use warnings
+* moved imsort and imsort_locate back to where they came from, since it made no
+  sense in this case to have them in a common class
+* removed dependency on File::Find
+* http://wiki.dirvish.org/index.cgi?RemoveCoreExclude
+* http://wiki.dirvish.org/index.cgi?TextBooleans
+* http://wiki.dirvish.org/index.cgi?RestrictExpireWalk
+* use three-fold open ($handle, ">", $file)
+* Add notice: Dirivsh won't run in a vServer (rsync cant create special files)
+* prevent backing up the backup directory
+* new Makefile/build-script
+* made rsync-like patterns (*.xml) work by prepending a dot to the pattern
+* fixed bug in dirvish-expire: $basecmd was prepended w/o space to rm
+* add locking for dirvish-expire
+! add cronjob (cron.d)
+* add configration examples in examples
+* dirvish-setup.pl: run dirvish --init after configuration
+* add link to current backup
+* move dirvish-locate to bin (incl. man page)
+* add global and per-backup "bwlimit" and pass it along to rsync (already there ;))
+* add locking for dirvish-runall (var/run/dirvish.pid) and dirvish (inside vault - /bank/vault/dirvish.pid)
+* SIG Handler
+* setup script
+* concurrency for dirvish-runall using threads

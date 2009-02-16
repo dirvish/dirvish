@@ -3,10 +3,10 @@
 # Copyright 2005 by the dirvish project
 # http://www.dirvish.org
 #
-# Last Revision   : $Rev$
-# Revision date   : $Date$
-# Last Changed by : $Author$
-# Stored as       : $HeadURL$
+# Last Revision   : $Rev: 57 $
+# Revision date   : $Date: 2005-10-02 03:40:37 +0200 (So, 02 Okt 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_1/dirvish-runall.pod $
 
 =head1 NAME
 
@@ -52,6 +52,10 @@ with timestamps.
 B<--version>
 
 Print the version information and exit.
+
+B<--pidfile>
+
+Specify an alternate location for the pidfile.
 
 =head1 EXIT CODES
 

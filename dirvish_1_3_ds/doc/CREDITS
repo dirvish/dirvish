@@ -11,7 +11,7 @@ S: USA
 
 N: Tomas Abad
 D: dirvish-initall
-S: España
+S: Espaï¿½a
 
 N: Jason Boxman
 E: jasonb AT edseek DOT com
@@ -71,3 +71,12 @@ D: Debian install, Debian HOWTO
 S: Almelo 
 S: Netherlands
 
+N: Dominik Schulz
+E: lkml AT ds DOT gauner DOT org
+W: http://developer.gauner.org/dirvish/
+D: Refactoring, Locking
+D: Please note that all my changes are licensed under the terms of
+D: Open Software License v2.0 or, at your choice, the terms of
+D: the GNU GPL 2.0 (or later).
+S: Darmstadt
+S: Germany

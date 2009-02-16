@@ -1,0 +1,13 @@
+client: thishost
+tree: /
+xdev: 1
+index: gzip
+log: bzip2
+nice: 10
+ionice: 6
+exclude:
+        /var/cache/apt/archives/*.deb
+        /var/cache/man/**
+        /tmp/**
+        /var/tmp/**
+        *.bak

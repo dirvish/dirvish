@@ -1,5 +1,19 @@
 CHANGELOG
 
+2009/??/??			 ?					?			?
+
+Major changes. The directory layout of the source was cleaned up
+and many new features were introduced. Everything regarding
+documentation was moved to doc/. Dirvish now adds a symlink to the
+last successful image inside the vault. Dirvish and dirvish-runall
+now support locking so only one instance will be run at the time.
+Add SIGnal handlers that try to exit dirvish gracefully once
+signaled. Plase do not try to abort dirvish using Ctrl+C since
+this may not work as you'd like it to. Dirvish-runall now supports
+concurrent execution of backups using threads. Set threads: 1 in
+the global configuration. Incorporated changes from the
+Debian package, i.e. moved dirvish-locate to bin. ... (TODO) ...
+
 2005/10/27           dirvishlib.pl        13.1       dirvish-1.3.1
 
 Fixed the expire rules to allow a "#" in the file name, escaped 

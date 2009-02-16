@@ -4,41 +4,27 @@
 # Copyright 2005 by the dirvish project
 # http://www.dirvish.org
 #
-# Last Revision   : $Rev$
-# Revision date   : $Date$
-# Last Changed by : $Author$
-# Stored as       : $HeadURL$
-
-#########################################################################
-#                                                         		#
-#	Licensed under the Open Software License version 2.0		#
-#                                                         		#
-#	This program is free software; you can redistribute it		#
-#	and/or modify it under the terms of the Open Software		#
-#	License, version 2.0 by Lauwrence E. Rosen.			#
-#                                                         		#
-#	This program is distributed in the hope that it will be		#
-#	useful, but WITHOUT ANY WARRANTY; without even the implied	#
-#	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR		#
-#	PURPOSE.  See the Open Software License for details.		#
-#                                                         		#
-#########################################################################
-
-my %CodeID =
-    ( Rev    => '$Rev$'     ,
-      Date   => '$Date$'    ,
-      Author => '$Author$'  ,
-      URL    => '$HeadURL$' ,
-    );
-
-$VERSION =   $CodeID{URL};
-$VERSION =~  s#^.*dirvish_##;  # strip off the front
-$VERSION =~  s#\/.*##;         # strip off the rear after the last /
-$VERSION =~  s#[_-]#.#g;       # _ or - to "."
-
-#########################################################
+# Last Revision   : $Rev: 656 $
+# Revision date   : $Date: 2009-02-08 00:23:29 +0100 (So, 08 Feb 2009) $
+# Last Changed by : $Author: tex $
+# Stored as       : $HeadURL: https://secure.id-schulz.info/svn/tex/priv/dirvish_1_3_1/dirvish.pl $
 #
-#   EXIT CODES
+#########################################################################
+#                                                         				#
+#	Licensed under the Open Software License version 2.0				#
+#                                                         				#
+#	This program is free software; you can redistribute it				#
+#	and/or modify it under the terms of the Open Software				#
+#	License, version 2.0 by Lauwrence E. Rosen.							#
+#                                                         				#
+#	This program is distributed in the hope that it will be				#
+#	useful, but WITHOUT ANY WARRANTY; without even the implied			#
+#	warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR				#
+#	PURPOSE.  See the Open Software License for details.				#
+#                                                         				#
+#########################################################################
+#
+#   EXIT CODES OF DIRVISH
 #
 #   0        success
 #   1-19     warnings
@@ -55,17 +41,47 @@ $VERSION =~  s#[_-]#.#g;       # _ or - to "."
 #   220-254  configuration error
 #   255      usage error
 #
+#----------------------------------------------------------------------------
+# Revision information
+#----------------------------------------------------------------------------
+my %CodeID =
+    ( Rev    => '$Rev: 656 $'     ,
+      Date   => '$Date: 2009-02-08 00:23:29 +0100 (So, 08 Feb 2009) $'    ,
+      Author => '$Author: tex $'  ,
+      URL    => '$HeadURL: https://secure.id-schulz.info/svn/tex/priv/dirvish_1_3_1/dirvish.pl $' ,
+    );
+
+$VERSION =   $CodeID{URL};
+$VERSION =~  s#^.*dirvish_##;  # strip off the front
+$VERSION =~  s#\/.*##;         # strip off the rear after the last /
+$VERSION =~  s#[_-]#.#g;       # _ or - to "."
+
+#----------------------------------------------------------------------------
+# Modules and includes
+#----------------------------------------------------------------------------
+use strict;
+use warnings;
 
 use POSIX qw(strftime);
 use Getopt::Long;
 use Time::ParseDate;
 use Time::Period;
+use Dirvish;
 
-use DirvishHack;     # this will change a lot during development
+#----------------------------------------------------------------------------
+# SIG Handler
+#----------------------------------------------------------------------------
+$SIG{TERM} = \&sigterm; # handles "kill <PID>"
+$SIG{INT} = \&sigterm; # handles Ctrl+C or "kill -2 <PID>"
 
-@rsyncargs = qw(-vrltH --delete);
+#----------------------------------------------------------------------------
+# Initialisation
+#----------------------------------------------------------------------------
+# default arguments to rsync
+my @rsyncargs = qw(-vrltH --delete);
 
-%RSYNC_CODES = (
+# explaination of rsync return codes
+my %RSYNC_CODES = (
       0 => [ 'success',	"No errors" ],
       1 => [ 'fatal',	"syntax or usage error" ],
       2 => [ 'fatal',	"protocol incompatibility" ],
@@ -98,7 +114,7 @@ use DirvishHack;     # this will change a lot during development
     127 => [ 'fatal',	"command not found" ],
 );
 
-@BOOLEAN_FIELDS = qw(
+my @BOOLEAN_FIELDS = qw(
     permissions
     checksum
     devices
@@ -111,7 +127,7 @@ use DirvishHack;     # this will change a lot during development
     zxfer
 );
 
-%RSYNC_OPT = (      	# simple options
+my %RSYNC_OPT = (		# simple options
     permissions   	=> '-pgo',
     devices		=> '-D',
     sparse		=> '-S',
@@ -123,49 +139,18 @@ use DirvishHack;     # this will change a lot during development
     'numeric-ids'	=> '--numeric-ids',
 );
 
-%RSYNC_POPT = (		# parametered options
+my %RSYNC_POPT = (		# parametered options
     'password-file'	=> '--password-file',
     'rsync-client'	=> '--rsync-path',
 );
 
-#----------------------------------------------
-#
-#
+# initialize the %$Options hash
+my $Options = reset_options( \&usage, @ARGV);
+load_master_config('f', $Options);	# load master configuration into $Options
 
-sub usage
-{
-    my $message = shift(@_);
-
-    length($message) and print STDERR $message, "\n\n";
-    $! and exit(255); # because getopt seems to send us here for death
-
-    print STDERR <<EOUSAGE;
-USAGE
-	dirvish --vault vault OPTIONS [ file_list ]
-	
-OPTIONS
-	--image image_name
-	--config configfile
-	--branch branch_name
-	--reference branch_name|image_name
-	--expire expire_date
-	--init
-	--reset option
-	--summary short|long
-	--no-run
-EOUSAGE
-
-	exit 255;
-}
-
-#------------------------------------------------------------------------
-
-$Options = reset_options( \&usage, @ARGV);   # initialize the %$Options hash
-load_master_config();    
-
-#---------------------------------------------------------------
+#----------------------------------------------------------------------------
 # Read the command line.  This puts data into the %$Options hash,
-# defined in dirvish.pm .  Some of the Options hash entries call
+# defined in Dirvish.pm.  Some of the Options hash entries call
 # subroutines, and the result of some of the subroutines is to
 # change the subroutine reference to the resulting scalar.
 # 
@@ -207,10 +192,14 @@ GetOptions($Options, qw(
     no-run|dry-run
     help|?
     version
-    )) or usage;
+    )) or &usage();
 
+# determine hostname of the machine running dirvish
+# used to determine if 'rsh' will be used to
+# access the client or not
 chomp($$Options{Server} = `hostname`);
 
+my $image;
 if ($$Options{image})
 {
     $image = $$Options{Image} = $$Options{image};
@@ -227,14 +216,16 @@ else
 
 $$Options{branch} =~ /:/
     and ($$Options{vault}, $$Options{branch})
-        = split(/:/, $Options{branch});
+        = split(/:/, $$Options{branch});
 
 $$Options{vault} =~ /:/
     and ($$Options{vault}, $$Options{branch})
-        = split(/:/, $Options{vault});
+        = split(/:/, $$Options{vault});
 
-for $key (qw(vault Image client tree))
+for my $key (qw(vault Image client tree))
 {
+	# check if $key is defined in config or on commandline
+	# or abort, asking for $key
     length($$Options{$key}) or usage("$key undefined");
     ref($$Options{$key}) eq 'CODE'
         and usage("$key undefined");
@@ -251,13 +242,23 @@ if(!$$Options{Bank})
             last;
         }
     }
-    $$Options{Bank} or seppuku 220, "ERROR: cannot find vault $$Options{vault}";
+    $$Options{Bank} or seppuku(220, "ERROR: cannot find vault $$Options{vault}");
 }
 
-$vault = join('/', $$Options{Bank}, $$Options{vault});
--d $vault or seppuku 221, "ERROR: cannot find vault $$Options{vault}";
+# Construct the full path to the vault
+my $vault = join('/', $$Options{Bank}, $$Options{vault});
+# Test if the given vault is a directory
+-d $vault or seppuku(221, "ERROR: cannot find vault $$Options{vault}");
 
 my $now = time;
+
+# Define the pidfile location for locking, i.e. only one instance of dirvish on one vault at a time
+my $pidfile = $vault."/dirvish.pid";
+
+if(!check_pidfile($pidfile)) {
+	print "$0 already running. Aborting at ".strftime('%H:%M:%S', localtime)." - PID: ".$$."\n";
+	exit 255; # Abort
+}
 
 if ($$Options{'image-time'})
 {
@@ -270,7 +271,7 @@ if ($$Options{'image-time'})
         $now = parsedate($$Options{'image-time'}, NOW => $n);
         $now > $n && $$Options{'image-time'} !~ /\+/ and $now -= 24*60*60;
     }
-    $now or seppuku 222, "ERROR: image-time unparseable: $$Options{'image-time'}";
+    $now or seppuku(222, "ERROR: image-time unparseable: $$Options{'image-time'}");
 }
 $$Options{'Image-now'} = strftime('%Y-%m-%d %H:%M:%S', localtime($now));
 
@@ -282,15 +283,14 @@ $image =~ /%/
 !$$Options{branch} || ref($$Options{branch})
     and $$Options{branch} = $$Options{'branch-default'} || 'default';
 
-# seppuku_prefix = join(':', $$Options{vault}, $$Options{branch}, $image);
-
 seppuku_prefix( join(':', $$Options{vault}, $$Options{branch}, $image) ); 
 
-if (-d "$vault/$$Options{'image-temp'}" && $image eq $$Options{'image-temp'})
+my $have_temp;
+if (defined($image) && defined($$Options{'image-temp'}) && -d "$vault/$$Options{'image-temp'}" && $image eq $$Options{'image-temp'})
 {
     my $iinfo;
-    $iinfo = loadconfig('R', "$vault/$image/summary");
-    $$iinfo{Image} or seppuku 223, "cannot cope with existing $image";
+    $iinfo = loadconfig('R', "$vault/$image/summary", $Options);
+    $$iinfo{Image} or seppuku(223, "cannot cope with existing $image");
 
     if ($$Options{'no-run'})
     {
@@ -302,15 +302,15 @@ if (-d "$vault/$$Options{'image-temp'}" && $image eq $$Options{'image-temp'})
 }
 
 -d "$vault/$$Options{Image}"
-    and seppuku 224, "ERROR: image $$Options{Image} already exists in $vault";
+    and seppuku(224, "ERROR: image $$Options{Image} already exists in $vault");
 -d "$vault/$image" && !$have_temp
-    and seppuku 225, "ERROR: image $image already exists in $vault";
+    and seppuku(225, "ERROR: image $image already exists in $vault");
 
 $$Options{Reference} = $$Options{reference} || $$Options{branch};
 if (!$$Options{init} && -f "$vault/dirvish/$$Options{Reference}.hist")
 {
     my (@images, $i, $s);
-    open(IMAGES, "$vault/dirvish/$$Options{Reference}.hist");
+    open(IMAGES, "<", "$vault/dirvish/$$Options{Reference}.hist");
     @images = <IMAGES>;
     close IMAGES;
     while ($i = pop(@images))
@@ -323,10 +323,10 @@ if (!$$Options{init} && -f "$vault/dirvish/$$Options{Reference}.hist")
     }
 }
 $$Options{init} || -d "$vault/$$Options{Reference}"
-    or seppuku 227, "ERROR: no images for branch $$Options{branch} found";
+    or seppuku(227, "ERROR: no images for branch $$Options{branch} found");
 
-if(!$$Options{expire} && $$Options{expire} !~ /never/i
-    && scalar(@{$$Options{'expire-rule'}}))
+if(!$$Options{expire} && defined($$Options{expire}) &&
+	$$Options{expire} !~ /never/i && scalar(@{$$Options{'expire-rule'}}))
 {
     my ($rule, $p, $t, $e);
     my @cron;
@@ -387,54 +387,59 @@ $_ = $$Options{tree} ;
 s/(\s)/\\$1/g;    # These two lines swap the escaped spaces with
 s/\\\\//g;        # the nonescaped ones.
 s/(\\\s)+/$1/g;   # replace multiple separators with only one
-($srctree,$aliastree) = split /\\\s/
-       or seppuku 228, "ERROR: no source tree defined";
+my ($srctree, $aliastree) = split(/\\\s/, $_)
+	or seppuku(228, "ERROR: no source tree defined");
 $aliastree ||= $srctree;
 
-$destree  = join("/", $vault, $image, 'tree');
-$reftree  = join('/', $vault, $$Options{Reference}, 'tree');
-$err_temp = join("/", $vault, $image, 'rsync_error.tmp');
-$err_file = join("/", $vault, $image, 'rsync_error');
-$log_file = join("/", $vault, $image, 'log');
-$log_temp = join("/", $vault, $image, 'log.tmp');
-$exl_file = join("/", $vault, $image, 'exclude');
-$fsb_file = join("/", $vault, $image, 'fsbuffer');
+my $destree  = join("/", $vault, $image, 'tree');
+my $reftree  = join("/", $vault, $$Options{'Reference'}, 'tree');
+my $err_temp = join("/", $vault, $image, 'rsync_error.tmp');
+my $err_file = join("/", $vault, $image, 'rsync_error');
+my $log_file = join("/", $vault, $image, 'log');
+my $log_temp = join("/", $vault, $image, 'log.tmp');
+my $exl_file = join("/", $vault, $image, 'exclude');
+my $fsb_file = join("/", $vault, $image, 'fsbuffer');
 
 log_file( $log_file );
 fsb_file( $fsb_file );
 
-while (($k, $v) = each %RSYNC_OPT)
+while (my ($k, $v) = each %RSYNC_OPT)
 {
     $$Options{$k} and push @rsyncargs, $v;
 }
 
-while (($k, $v) = each %RSYNC_POPT)
+while (my ($k, $v) = each %RSYNC_POPT)
 {
     $$Options{$k} and push @rsyncargs, $v . '=' . $$Options{$k};
 }
 
+# Set an optional speed limit for rsync
 $$Options{'speed-limit'}
     and push @rsyncargs, '--bwlimit=' . $$Options{'speed-limit'} * 100;
 
+# Set any additional rsync options
 scalar @{$$Options{'rsync-option'}}
     and push @rsyncargs, @{$$Options{'rsync-option'}};
 
+# If any excludes are given they will be written
+# to the $exl_file. Let rsync honour this file.
 scalar @{$$Options{exclude}}
     and push @rsyncargs, '--exclude-from=' . $exl_file;
 
 if (!$$Options{'no-run'})
 {
     mkdir "$vault/$image", 0700
-        or seppuku 230, "mkdir $vault/$image failed";
+        or seppuku(230, "mkdir $vault/$image failed");
     mkdir $destree, 0755;
 
-    open(SUMMARY, ">$vault/$image/summary")
-        or seppuku 231, "cannot create $vault/$image/summary"; 
+    open(SUMMARY, ">", "$vault/$image/summary")
+        or seppuku(231, "cannot create $vault/$image/summary"); 
 } else {
     open(SUMMARY, ">-");
 }
 
-$Set = $Unset = '';
+my $Set = '';
+my $Unset = '';
 for (@BOOLEAN_FIELDS)
 {
     $$Options{$_}
@@ -442,7 +447,7 @@ for (@BOOLEAN_FIELDS)
         or $Unset .= $_ . ' ';
 }
 
-@summary_fields = qw(
+my @summary_fields = qw(
     client tree rsh
     Server Bank vault branch
            Image image-temp Reference
@@ -451,11 +456,11 @@ for (@BOOLEAN_FIELDS)
     rsync-option
     Enabled
 );
-$summary_reset = 0;
-for $key (@summary_fields, 'RESET', sort(keys(%$Options)))
+my $summary_reset = 0;
+for my $key (@summary_fields, 'RESET', sort(keys(%$Options)))
 {
     if ($key eq 'RESET')
-           {
+    {
         $summary_reset++;
         $Set and print SUMMARY "SET $Set\n";
         $Unset and print SUMMARY "UNSET $Unset\n";
@@ -466,7 +471,7 @@ for $key (@summary_fields, 'RESET', sort(keys(%$Options)))
     grep(/^$key$/, @BOOLEAN_FIELDS) and next;
     $summary_reset && grep(/^$key$/, @summary_fields) and next;
 
-    $val = $$Options{$key};
+    my $val = $$Options{$key};
     if(ref($val) eq 'ARRAY')
     {
         my $v;
@@ -484,38 +489,39 @@ for $key (@summary_fields, 'RESET', sort(keys(%$Options)))
 
 $$Options{init} or push @rsyncargs, "--link-dest=$reftree";
 
-$rclient = undef;
+my $rclient = "";
 $$Options{client} ne $$Options{Server}
     and $rclient = $$Options{client} . ':';
 
 $ENV{RSYNC_RSH} = $$Options{rsh};
 
-
 # Define the rsync command.  This is an array, consisting of:
-# 1) The command to use for rsync itself (typically 'rsync', but optionally
+# 1) The nice binary call with the configured nice level (optional).
+# 2) The ionice binary call with the configured ionice level (optional).
+# 3) The command to use for rsync itself (typically 'rsync', but optionally
 #    the path and  program name set by the "rsync" option in a config file.  
-# 2) all the rsync arguments incl. the --exclude-from=$exl_file and the 
+# 4) all the rsync arguments incl. the --exclude-from=$exl_file and the 
 #    --link-dest=$reftree if not init
-# 3) the source: if client=server this is  source_tree/,
-#    otherwise it is client:source_tree/ 
-# 4) the destination: bank/vault/image/tree
+# 5) the source: if client=server this is  source_tree/,
+#    otherwise it is client:source_tree/.
+#    Only append a slash if the source_tree doesn't end in a slash.
+# 6) the destination: bank/vault/image/tree
 #
 
-@cmd = (
+my @cmd = (
+	(($$Options{nice} && $$Options{nice} > -1 && &check_nice()) ? &check_nice()." -".$$Options{nice} : ''),
+	(($$Options{ionice} && $$Options{ionice} > -1 && &check_ionice()) ? &check_ionice()." -n".$$Options{ionice} : ''),
     ($$Options{rsync} ? $$Options{rsync} : 'rsync'),
     @rsyncargs,
-    $rclient . $srctree . '/',
+    $rclient . $srctree . (($srctree =~ m#/$#) ? '' : '/'),	# make sure that path end in a slash
     $destree
     );
 
-# summary example:
-# ACTION: rsync -vrltDH -pgo --numeric-ids --stats -x \
-# --exclude-from=/backup/dirvish/gate/var/2004-0327-0300/exclude \
-# --link-dest=/backup/dirvish/gate/var/2004-0326-0300/tree gate:/var/ \
-#  /backup/dirvish/gate/var/2004-0327-0300/tree
-
 printf SUMMARY "\n%s: %s\n", 'ACTION', join (' ', @cmd);
 
+# sleep some time if no-run is enabled to allow inspection
+$$Options{'no-run'} and sleep 15;
+# exit here if no-run is enabled
 $$Options{'no-run'} and exit 0;
 
 printf SUMMARY "%s: %s\n", 'Backup-begin',
@@ -523,10 +529,10 @@ printf SUMMARY "%s: %s\n", 'Backup-begin',
 
 # logic updated on 2004-09-04 by EricM to handle spaces in directories on
 # windows boxen. 
-$env_srctree = $srctree;                                      # esm 2004-09-04
+my $env_srctree = $srctree;                                      # esm 2004-09-04
 $env_srctree =~ s/ /\\ /g;                                    # esm 2004-09-04
 
-$WRAPPER_ENV = sprintf (" %s=%s" x 5,
+my $WRAPPER_ENV = sprintf (" %s=%s" x 5,
     'DIRVISH_SERVER', $$Options{Server},
     'DIRVISH_CLIENT', $$Options{client},
     'DIRVISH_SRC', $env_srctree,                              # esm 2004-09-04
@@ -537,17 +543,23 @@ $WRAPPER_ENV = sprintf (" %s=%s" x 5,
         $$Options{Image}),
 );
 
+# Create the excludes file (read by rsync)
 if(scalar @{$$Options{exclude}})
 {
-    open(EXCLUDE, ">$exl_file");
+    open(EXCLUDE, ">", $exl_file);
     for (@{$$Options{exclude}})
     {
         print EXCLUDE $_, "\n";
-    }    
+    }
+    # add the bank to the exclude file to prevent
+    # backup-recursion
+    print EXCLUDE $$Options{Bank}, "/\n";
     close(EXCLUDE);
     $ENV{DIRVISH_EXCLUDE} = $exl_file;
 }
 
+my %status = ();
+# Execute the pre- script on the server
 if ($$Options{'pre-server'})
 {
     $status{'pre-server'} = scriptrun(
@@ -570,6 +582,7 @@ if ($$Options{'pre-server'})
     }
 }
 
+# Execute the pre- script on the client
 if ($$Options{'pre-client'})
 {
     $status{'pre-client'} = scriptrun(
@@ -603,12 +616,15 @@ if ($$Options{'pre-client'})
     }
 }
 
-# create a buffer to allow logging to work after full fileystem
-open (FSBUF, ">$fsb_file");
+# Create a buffer to allow logging to work after full fileystem
+open (FSBUF, ">", $fsb_file);
 print FSBUF "         \n" x 6553;
 close FSBUF;
 
-for ($runloops = 0; $runloops < 5; ++$runloops)
+# PERFORM THE BACKUP
+# Try up to five times to create the backup if non fatal errors
+# occur.
+for (my $runloops = 0; $runloops < 5; ++$runloops)
 {
     logappend($log_file, sprintf("\n%s: %s\n", 'ACTION', join(' ', @cmd)));
 
@@ -617,16 +633,21 @@ for ($runloops = 0; $runloops < 5; ++$runloops)
     # preallocate 64KB so there will be space if rsync
     # fills the filesystem.
 
+	no warnings 'once';
     open (INHOLD, "<&STDIN");
     open (ERRHOLD, ">&STDERR");
-    open (STDERR, ">$err_temp");
+    open (STDERR, ">", $err_temp);
     print STDERR "         \n" x 6553;
     seek STDERR, 0, 0;
 
     open (OUTHOLD, ">&STDOUT");
-    open (STDOUT, ">$log_temp");
+    open (STDOUT, ">", $log_temp);
+    use warnings 'once';
 
-    $status{code} = (system(@cmd) >> 8) & 255;
+	# convert cmd array to scalar before passing to system to force a call
+	# to system LIST instead of system PROGRAM LIST which would mess with
+	# the return codes
+    $status{code} = (system("@cmd") >> 8) & 255;
 
     open (STDERR, ">&ERRHOLD");
     open (STDOUT, ">&OUTHOLD");
@@ -645,7 +666,7 @@ for ($runloops = 0; $runloops < 5; ++$runloops)
     close (LOG_FILE);
     unlink $log_temp;
 
-    $status{code} and errorscan(\%status, $err_file, $err_temp);
+    $status{code} and errorscan(\%status, $err_file, $err_temp, $runloops, $Options);
 
     $status{warning} || $status{error}
                and logappend($log_file, sprintf(
@@ -665,9 +686,14 @@ for ($runloops = 0; $runloops < 5; ++$runloops)
     }
 }
 
+# Remove the exclude file
 scalar @{$$Options{exclude}} && unlink $exl_file;
 -f $fsb_file and unlink $fsb_file;
 
+# Check the status of the run
+my $status = undef;
+my $Status = undef;
+my $Status_msg = undef;
 if ($status{code})
 {
     if ($RSYNC_CODES{$status{code}}[0] eq 'check')
@@ -706,10 +732,17 @@ if ($status{code})
     }
 } else {
     $Status = $Status_msg = 'success';
+    # create a link to the last successful image
+    # -s: create a symbolic link
+    # -f: Force, overwrite existing
+    # -T: threat target as file (prevent nested links)
+    my $cmd = "ln -sfT $vault/$image/ $vault/current";
+    system($cmd);
 }
 
 $WRAPPER_ENV .= ' DIRVISH_STATUS=' .  $Status;
 
+# Execute the post- script on the client.
 if ($$Options{'post-client'})
 {
     $status{'post-client'} = scriptrun(
@@ -733,6 +766,7 @@ if ($$Options{'post-client'})
     }
 }
 
+# Execute the post- script on the server.
 if ($$Options{'post-server'})
 {
     $status{'post-server'} = scriptrun(
@@ -753,9 +787,11 @@ if ($$Options{'post-server'})
     }
 }
 
+# If the backup failed remove the tree, but keep the
+# image directory with the logfiles.
 if($status{fatal})
 {
-    system ("rm -rf $destree");
+    system("rm -rf $destree");
     unlink $err_temp;
     printf SUMMARY "%s: %s\n", 'Status', $Status_msg;
     exit 199;
@@ -772,10 +808,11 @@ printf SUMMARY "%s: %s\n", 'Status', $Status_msg;
 # We assume warning and unknown produce useful results
 $Status eq 'warning' || $Status eq 'unknown' and $Status = 'success';
 
+my $newhist = 0;
 if ($Status eq 'success')
 {
     -s "$vault/dirvish/$$Options{branch}.hist" or $newhist = 1;
-    if (open(HIST, ">>$vault/dirvish/$$Options{branch}.hist"))
+    if (open(HIST, ">>", "$vault/dirvish/$$Options{branch}.hist"))
     {
         $newhist == 1 and printf HIST ("#%s\t%s\t%s\t%s\n",
                 qw(IMAGE CREATED REFERENCE EXPIRES));
@@ -792,7 +829,9 @@ if ($Status eq 'success')
         $vault, $$Options{branch}, $$Options{Image};
 }
 
-length($$Options{'meta-perm'})
+# If permissions for the meta-information
+# files are given, set them.
+(defined($$Options{'meta-perm'}) && length($$Options{'meta-perm'}))
     and chmod oct($$Options{'meta-perm'}),
         "$vault/$image/summary",
         "$vault/$image/rsync_error",
@@ -800,31 +839,88 @@ length($$Options{'meta-perm'})
 
 $Status eq 'success' or exit 149;
 
-$$Options{log} =~ /.*(gzip)|(bzip2)/
+(defined($$Options{log}) && $$Options{log} =~ /.*(gzip)|(bzip2)/)
     and system "$$Options{log} $vault/$image/log";
 
+# Create the index{,.gz,.bz2} if not disabled 
 if ($$Options{index} && $$Options{index} !~/^no/i)
 {
-    
-    open(INDEX, ">$vault/$image/index");
+    open(INDEX, ">", "$vault/$image/index");
     open(FIND, "find $destree -ls|")
-        or seppuku 21, "dirvish $vault:$image cannot build index";
+        or seppuku(21, "dirvish $vault:$image cannot build index");
 
     while (<FIND>)
     {
         s/ $destree\// $aliastree\//g;
         print INDEX $_
-           or seppuku 22, "dirvish $vault:$image error writing index";
+           or seppuku(22, "dirvish $vault:$image error writing index");
     }
     close FIND;
     close INDEX;
 
-    length($$Options{'meta-perm'})
+    (defined($$Options{'meta-perm'}) && length($$Options{'meta-perm'}))
         and chmod oct($$Options{'meta-perm'}), "$vault/$image/index";
     $$Options{index} =~ /.*(gzip)|(bzip2)/
         and system "$$Options{index} $vault/$image/index";
 }
 
-chmod oct($$Options{'image-perm'}) || 0755, "$vault/$image";
-
+chmod((defined($$Options{'image-perm'}) && oct($$Options{'image-perm'})) || 0755, "$vault/$image");
 exit 0;
+#----------------------------------------------------------------------------
+# Subs
+#----------------------------------------------------------------------------
+# Display usage information
+sub usage
+{
+    my $message = shift(@_);
+
+    length($message) and print STDERR $message, "\n\n";
+    #$! and exit(255); # because getopt seems to send us here for death
+
+    print STDERR <<EOUSAGE;
+USAGE
+	dirvish --vault vault OPTIONS [ file_list ]
+	
+OPTIONS
+	--image image_name
+	--config configfile
+	--branch branch_name
+	--reference branch_name|image_name
+	--expire expire_date
+	--init
+	--reset option
+	--summary short|long
+	--no-run
+EOUSAGE
+
+	exit 255;
+}
+# Handle SIGTERM (SIG-15)
+sub sigterm
+{
+	print STDERR "Received SIGTERM. Aborting running backup ...";
+	# kill childs - kill(TERM, -$$):
+	use POSIX;
+	my $cnt = kill(SIGTERM, -$$);
+	no POSIX;
+	print STDERR "Signaled $cnt processes in current processgroup";
+	# remove in-progress dir
+	my $current_image = "$vault/$image";
+	if($current_image) {
+		my $cmd = "rm -rf \"$current_image\"";
+		print "$cmd\n" unless $$Options{'quiet'};
+		system($cmd) unless $$Options{'no-run'};
+	}
+	# quit
+	exit;
+}
+# Remove the pidfile on exit
+END {
+	# remove the pidfile on exit
+	if(defined($pidfile) && -e $pidfile) {
+		remove_pidfile($pidfile);
+	}
+}
+#----------------------------------------------------------------------------
+# EOF
+#----------------------------------------------------------------------------

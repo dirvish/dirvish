@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# Daily cronjob for Dirvish
+#
+# 
+/usr/sbin/dirvish-expire --quiet; /usr/sbin/dirvish-runall --quiet

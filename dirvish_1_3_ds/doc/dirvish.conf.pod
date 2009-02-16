@@ -3,10 +3,10 @@
 # Copyright 2005 by the dirvish project
 # http://www.dirvish.org
 #
-# Last Revision   : $Rev$
-# Revision date   : $Date$
-# Last Changed by : $Author$
-# Stored as       : $HeadURL$
+# Last Revision   : $Rev: 57 $
+# Revision date   : $Date: 2005-10-02 03:40:37 +0200 (So, 02 Okt 2005) $
+# Last Changed by : $Author: keithl $
+# Stored as       : $HeadURL: http://www.dirvish.org/svn/dirvish_1_3_1/dirvish.conf.pod $
 
 =head1 NAME
 
@@ -67,7 +67,9 @@ the ones before.
 
 Boolean values need to specified as B<1> or B<0> or may be specified
 using B<SET> or B<UNSET>. Some Boolean values are set by default and
-must be explicitly unset if unwanted.
+must be explicitly unset if unwanted. Boolean values may also
+specified using false, f, no, n or off instead of 0 and true, t, yes,
+y or on instead of 1.
 
 Each option is marked here with one of (B) for Boolean, (S) single
 value, (L) list or (0) other.
@@ -259,6 +261,18 @@ Create an initial I<image>.
 
 Turning this on will prevent backups from being incremental.
 
+B<ionice:> (S)
+
+Set a ionice value when running rsync. This requires
+a Linux kernel version of at least 2.6.13 with the
+CFQ scheduler. This prerequesites will be checked on runtime
+so its safe to enabled this option. The ionice level is
+analogus to nice. A higher value (between 0 and 7) will
+lower the IO priority of rsync and should make the system
+more responsive during backups.
+
+Default value: B<7>
+
 B<log:> I<text>|I<gzip>|I<bzip2> (S)
 
 Specify format for the image log file.
@@ -282,6 +296,15 @@ confidential information so uncontrolled access may constitute a
 security weakness.
 
 See B<chmod(1) and umask(2)> for more details.
+
+B<nice:> (S)
+
+Set a nice value of n when running rsync. Valid values
+are 0 to 19 where 19 is the lowest priority and 0 the
+highest. Altough nice supports lower values (higher priorities)
+this is not supported.
+
+Default value: B<19>
 
 B<numeric-ids:> (B)
 
@@ -456,6 +479,16 @@ index so B<dirvish-locate> will report paths consistent with common
 usage. This can help reduce confusion when dealing with users
 unfamiliar with the physical topology of their network provided files.
 
+B<Threads:> (S)
+
+Use threads for concurrent backups. Only evaluated by dirvish-runall.
+Set this to 0 to disabled threads. Any number greater than 0 will enabled
+threads and is used to limit the number of concurrent threads, i.e. a
+setting of 4 will allow four concurrent threads to run. If there are
+more vaults to be processed those will wait until one of the running
+threads will end. Note: Your perl binary has to be compiled to
+support threads.
+
 B<no-run:> (B)
 
 Don't actually do anything.
@@ -491,13 +524,11 @@ subsystem.
 
 Default value: B<0>
 
-
 B<xdev:> (B)
 
 Do not cross mount-points when traversing the tree on the client.
 
 Default value: B<0>
-
 
 B<zxfer:> (B)
 
