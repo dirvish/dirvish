@@ -197,6 +197,15 @@ occurred.
 
 .default 0
 .TP
+.Bi concurrent: count (S)
+Specifies how many concurrent dirvish processes
+dirvish-runall should spawn.
+.I count
+should not be set to less
+than 1.
+
+.default 1
+.TP
 .Bi config: filename (S)
 Load configuration file.
 
