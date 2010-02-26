@@ -138,7 +138,7 @@ for $sched (@{$$Config{Runall}})
 		print "Fork failed!\n";
 	} else {
 		# pid == 0, child thread
-		exec($cmd) || die "child exit";
+		exec($cmd) || die "Exec failed: $!";
 	}
 }
 
