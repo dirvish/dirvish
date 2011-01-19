@@ -452,7 +452,7 @@ scalar @{$$Options{exclude}}
 
 if (!$$Options{'no-run'})
 {
-	mkpath "$vault/$image", 0700
+	mkpath "$vault/$image", 0, 0700
 		or seppuku 230, "mkpath $vault/$image failed";
 	mkdir $destree, 0755;
 
