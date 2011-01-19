@@ -11,9 +11,11 @@ PREREQUISITES
 	perl5 and these perl modules (if you aren't familiar with
 	perl see CPAN(3pm)).
 		POSIX
+		File::Find
+		File::Path
 		Getopt::Long
 		Time::ParseDate
-		Time::Period by Patric Ryan
+		Time::Period
 	
 	Lots of empty disk space.  I recommend using volume management
 	(see lvm(8)).
@@ -21,6 +23,7 @@ PREREQUISITES
 	Ssh configured so root on the backup server can use ssh
 	non-interactively to the backup clients.  This does not
 	necessarily mean it has to be able to be root on those clients.
+
 
 INSTALL
 

@@ -50,6 +50,7 @@ use POSIX qw(strftime);
 use Getopt::Long;
 use Time::ParseDate;
 use Time::Period;
+use File::Path;
 
 @rsyncargs = qw(-vrltH --delete);
 
@@ -451,8 +452,8 @@ scalar @{$$Options{exclude}}
 
 if (!$$Options{'no-run'})
 {
-	mkdir "$vault/$image", 0700
-		or seppuku 230, "mkdir $vault/$image failed";
+	mkpath "$vault/$image", 0700
+		or seppuku 230, "mkpath $vault/$image failed";
 	mkdir $destree, 0755;
 
 	open(SUMMARY, ">$vault/$image/summary")
