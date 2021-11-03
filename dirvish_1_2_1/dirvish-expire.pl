@@ -118,7 +118,8 @@ if ($$Options{vault})
 		}
 	}
 	$bank or seppuku 252, "Cannot find vault $$Options{vault}";
-	find(\&findop, join('/', $bank, $$Options{vault}));
+	# Follow symlinks
+	find( {wanted => \&findop, follow => 1}, join('/', $bank, $$Options{vault}));
 } else {
 	for $bank (@{$$Options{bank}})
 	{
